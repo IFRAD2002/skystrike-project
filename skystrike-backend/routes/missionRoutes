@@ -1,0 +1,25 @@
+// routes/missionRoutes.js
+const express = require('express');
+const {
+  getMissions,
+  createMission,
+  updateMissionStatus,
+  addAssignmentToMission, // Import the new function
+} = require('../controllers/missionController');
+const { protect, authorize } = require('../middleware/authMiddleware');
+
+const router = express.Router();
+
+router.route('/')
+    .get(protect, getMissions) // Let's protect this too
+    .post(protect, authorize('Air Battle Manager'), createMission); // Admins create missions
+
+router.route('/:id/status')
+    .put(protect, authorize('Air Battle Manager'), updateMissionStatus);
+
+// Our new admin-only assignment route
+router.route('/:id/assign')
+    .put(protect, authorize('Air Battle Manager'), addAssignmentToMission);
+
+
+module.exports = router;
