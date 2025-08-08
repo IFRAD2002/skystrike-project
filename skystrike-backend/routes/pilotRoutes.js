@@ -1,4 +1,4 @@
-// routes/pilotRoutes.js
+
 const express = require('express');
 const {
   getPilots,

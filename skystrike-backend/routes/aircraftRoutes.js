@@ -1,4 +1,4 @@
-// routes/aircraftRoutes.js
+
 const express = require('express');
 const {
   getAircrafts,
@@ -10,7 +10,7 @@ const {
 
 // Import our middleware
 const { protect, authorize } = require('../middleware/authMiddleware');
-const upload = require('../middleware/upload'); // 1. Import upload middleware
+const upload = require('../middleware/upload'); 
 
 const router = express.Router();
 
@@ -23,7 +23,7 @@ router
   .post(
     protect,
     authorize('Air Battle Manager'),
-    upload.single('image'), // 2. Add the middleware here
+    upload.single('image'), 
     createAircraft
   );
 

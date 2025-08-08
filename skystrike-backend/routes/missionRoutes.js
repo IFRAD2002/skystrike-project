@@ -1,17 +1,17 @@
-// routes/missionRoutes.js
+
 const express = require('express');
 const {
   getMissions,
   createMission,
   updateMissionStatus,
-  addAssignmentToMission, // Import the new function
+  addAssignmentToMission,
 } = require('../controllers/missionController');
 const { protect, authorize } = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
 router.route('/')
-    .get(protect, getMissions) // Let's protect this too
+    .get(protect, getMissions) 
     .post(protect, authorize('Air Battle Manager'), createMission); // Admins create missions
 
 router.route('/:id/status')

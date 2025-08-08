@@ -1,4 +1,4 @@
-// src/pages/MissionsPage.jsx
+
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
@@ -23,7 +23,7 @@ const MissionsPage = () => {
       const token = localStorage.getItem('token');
       const headers = { Authorization: `Bearer ${token}` };
 
-      // Fetch all data concurrently
+      
       const [missionsRes, pilotsRes, aircraftsRes] = await Promise.all([
         axios.get('http://localhost:5001/api/missions', { headers }),
         axios.get('http://localhost:5001/api/pilots', { headers }),

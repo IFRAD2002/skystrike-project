@@ -1,4 +1,4 @@
-// controllers/pilotController.js
+
 const Pilot = require('../models/Pilot');
 
 // @desc    Get all pilots

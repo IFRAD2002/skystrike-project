@@ -1,4 +1,4 @@
-// src/components/MainLayout.jsx
+
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 import Navbar from './Navbar';
@@ -6,11 +6,10 @@ import Navbar from './Navbar';
 const MainLayout = () => {
   return (
     <>
-      <Navbar />
+      <Navbar /> 
       <main>
-        {/* Child routes will be rendered here */}
         <Outlet /> 
-      </main>
+      </main> 
     </>
   );
 };

@@ -1,4 +1,4 @@
-// models/Aircraft.js
+
 const mongoose = require('mongoose');
 
 const aircraftSchema = new mongoose.Schema(

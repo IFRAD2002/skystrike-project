@@ -1,4 +1,4 @@
-// src/pages/DashboardPage.jsx
+
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import AircraftList from '../components/AircraftList';
@@ -12,7 +12,7 @@ const DashboardPage = () => {
   const userRole = localStorage.getItem('userRole');
 
   const fetchAircrafts = useCallback(async () => {
-    // ... fetchAircrafts function remains the same
+    
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
@@ -44,7 +44,6 @@ const DashboardPage = () => {
         )}
       </div>
 
-      {/* ... rest of the component remains the same ... */}
        <div className="card bg-base-300 bg-opacity-50 shadow-xl">
         <div className="card-body">
           <h2 className="card-title">Aircraft Fleet</h2>

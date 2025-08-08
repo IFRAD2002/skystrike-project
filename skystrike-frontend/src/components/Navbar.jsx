@@ -1,6 +1,6 @@
-// src/components/Navbar.jsx
+
 import React from 'react';
-// Import NavLink instead of Link
+
 import { NavLink, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
@@ -15,10 +15,10 @@ const Navbar = () => {
     navigate('/login');
   };
 
-  // This style will be applied to the active NavLink
+ 
   const activeLinkStyle = {
-    backgroundColor: 'hsl(var(--p))', // Use the primary color from daisyUI
-    color: 'hsl(var(--pc))', // Use the primary-content color
+    backgroundColor: 'hsl(var(--p))', 
+    color: 'hsl(var(--pc))', 
   };
 
   return (

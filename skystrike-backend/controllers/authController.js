@@ -1,4 +1,4 @@
-// controllers/authController.js
+
 const Pilot = require('../models/Pilot');
 const jwt = require('jsonwebtoken');
 

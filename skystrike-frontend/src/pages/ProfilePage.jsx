@@ -1,4 +1,4 @@
-// src/pages/ProfilePage.jsx
+
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -56,7 +56,7 @@ const ProfilePage = () => {
     <div className="container mx-auto p-8">
       <div className="card lg:card-side bg-base-100 shadow-xl">
         <figure className="p-8">
-            {/* Construct the full URL to the image on your backend */}
+            
           <img 
             src={`http://localhost:5001/${user.profilePicture}`} 
             alt="Profile"

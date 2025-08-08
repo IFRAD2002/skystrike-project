@@ -1,4 +1,4 @@
-// controllers/aircraftController.js
+
 const Aircraft = require('../models/Aircraft');
 
 // @desc    Get all aircraft
@@ -89,4 +89,3 @@ exports.deleteAircraft = async (req, res) => {
     }
 }
 
-// You can add update and delete functions here later in the same pattern!

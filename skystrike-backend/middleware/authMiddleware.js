@@ -1,4 +1,4 @@
-// middleware/authMiddleware.js
+
 const jwt = require('jsonwebtoken');
 const Pilot = require('../models/Pilot');
 
@@ -16,7 +16,7 @@ exports.protect = async (req, res, next) => {
 
   // Make sure token exists
   if (!token) {
-    // Using 'return' ensures the function stops here
+    // Using 'return' ensuring the function stops here
     return res.status(401).json({ success: false, error: 'Not authorized, no token' });
   }
 
@@ -33,10 +33,9 @@ exports.protect = async (req, res, next) => {
         return res.status(401).json({ success: false, error: 'Not authorized' });
     }
     
-    // Proceed to the next step (the controller function)
+  
     next();
   } catch (error) {
-    // This will catch any errors from jwt.verify, like an expired or malformed token
     return res.status(401).json({ success: false, error: 'Not authorized, token failed' });
   }
 };

@@ -1,4 +1,4 @@
-// models/Mission.js
+
 const mongoose = require('mongoose');
 
 const assignmentSchema = new mongoose.Schema({
@@ -12,7 +12,7 @@ const assignmentSchema = new mongoose.Schema({
     ref: 'Aircraft',
     required: true,
   },
-}, {_id: false}); // _id: false prevents subdocuments from getting their own ID
+}, {_id: false}); 
 
 const missionSchema = new mongoose.Schema(
   {
@@ -31,7 +31,7 @@ const missionSchema = new mongoose.Schema(
       enum: ['PLANNED', 'IN_PROGRESS', 'COMPLETED', 'ABORTED'],
       default: 'PLANNED',
     },
-    // This is the new array for assignments
+    
     assignments: [assignmentSchema],
   },
   {

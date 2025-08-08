@@ -1,4 +1,4 @@
-// src/pages/LoginPage.jsx
+
 import React, { useState } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
@@ -40,9 +40,8 @@ const LoginPage = () => {
   return (
     <div className="hero min-h-screen bg-base-200" style={{backgroundImage: 'url(/military-bg.jpg)'}}>
       <div className="hero-overlay bg-opacity-60"></div>
-      {/* The change is in this next line */}
+      
       <div className="hero-content flex-col text-center">
-        {/* This is the top part with the logo and message */}
         <div className="mb-8">
           <h1 className="text-5xl font-bold">
             <span className="text-primary">SKYSTRIKE</span>

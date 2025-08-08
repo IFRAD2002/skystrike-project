@@ -1,13 +1,13 @@
-// server.js
+
 const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const connectDB = require('./config/db');
 
-// Load env vars
+// Load env var
 dotenv.config();
 
-// Connect to database
+
 connectDB();
 const authRoutes = require('./routes/authRoutes');
 const aircraftRoutes = require('./routes/aircraftRoutes');
@@ -19,14 +19,14 @@ const app = express();
 // Body parser middleware
 app.use(express.json());
 
-// Enable CORS
+
 app.use(cors());
 
 // Simple route for testing
 app.get('/', (req, res) => {
   res.send('Skystrike API is running...');
 });
-// Set static folder
+// Set static folder(for photos and stuff)
 app.use(express.static('public'));
 
 //Routes

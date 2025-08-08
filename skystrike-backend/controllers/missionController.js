@@ -1,11 +1,11 @@
-// controllers/missionController.js
+
 const Mission = require('../models/Mission');
 const Aircraft = require('../models/Aircraft');
 const Pilot = require('../models/Pilot');
 
 exports.getMissions = async (req, res) => {
   try {
-    // We now need to populate the nested fields inside the assignments array
+    
     const missions = await Mission.find().populate({
       path: 'assignments',
       populate: [

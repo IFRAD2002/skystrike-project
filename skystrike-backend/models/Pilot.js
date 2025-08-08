@@ -1,4 +1,4 @@
-// models/Pilot.js
+
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
@@ -35,7 +35,7 @@ const pilotSchema = new mongoose.Schema(
       default: 'Pilot',
     },
     profilePicture: {
-      type: String, // We will store the path to the image file
+      type: String, 
       default: 'no-photo.jpg',
     },
     flightHours: {
@@ -57,7 +57,7 @@ pilotSchema.pre('save', async function (next) {
   this.password = await bcrypt.hash(this.password, salt);
 });
 
-// Method to compare entered password to hashed password in database
+// compare entered password to hashed password in database
 pilotSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };

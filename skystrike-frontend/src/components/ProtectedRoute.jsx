@@ -1,4 +1,4 @@
-// src/components/ProtectedRoute.jsx
+
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 
@@ -10,7 +10,7 @@ const ProtectedRoute = ({ children }) => {
     return <Navigate to="/login" replace />;
   }
 
-  // If a token exists, render the child component (the protected page)
+  // If a token exists, render the children as in whatever logged in page(the protected page)
   return children;
 };
 

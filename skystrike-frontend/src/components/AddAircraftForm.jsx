@@ -1,4 +1,4 @@
-// src/components/AddAircraftForm.jsx
+
 import React, { useState } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
@@ -7,25 +7,25 @@ const AddAircraftForm = ({ onSuccess }) => {
   const [tailNumber, setTailNumber] = useState('');
   const [model, setModel] = useState('');
   const [status, setStatus] = useState('ACTIVE');
-  const [image, setImage] = useState(null); // State for the image file
+  const [image, setImage] = useState(null); 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // We must use FormData to send files
+    //use FormData to send files
     const formData = new FormData();
     formData.append('tailNumber', tailNumber);
     formData.append('model', model);
     formData.append('status', status);
     if (image) {
-      formData.append('image', image); // The field name 'image' must match the backend
+      formData.append('image', image); // VVI*** The field name 'image' must match the backend
     }
 
     try {
       const token = localStorage.getItem('token');
       await axios.post('http://localhost:5001/api/aircrafts', formData, {
         headers: {
-          'Content-Type': 'multipart/form-data', // Axios usually sets this automatically for FormData
+          'Content-Type': 'multipart/form-data', 
           Authorization: `Bearer ${token}`,
         },
       });
@@ -41,7 +41,7 @@ const AddAircraftForm = ({ onSuccess }) => {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      {/* Tail Number and Model inputs remain the same */}
+      
       <div>
         <label className="label"><span className="label-text">Tail Number</span></label>
         <input type="text" placeholder="e.g., NG-1234" className="input input-bordered w-full"
