@@ -1,6 +1,6 @@
-
+// src/pages/ProfilePage.jsx
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import API from '../api'; // Use the new API config
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
@@ -19,7 +19,8 @@ const ProfilePage = () => {
       }
 
       try {
-        const response = await axios.get('http://localhost:5001/api/auth/me', {
+        // Updated to use API.get
+        const response = await API.get('/auth/me', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -28,7 +29,7 @@ const ProfilePage = () => {
       } catch (error) {
         console.error('Failed to fetch profile', error);
         toast.error('Session expired. Please log in again.');
-        localStorage.removeItem('token'); // Clear bad token
+        localStorage.removeItem('token');
         navigate('/login');
       } finally {
         setLoading(false);
@@ -37,9 +38,10 @@ const ProfilePage = () => {
 
     fetchProfile();
   }, [navigate]);
-
+  
   const handleLogout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('userRole');
     toast.success('Logged out successfully');
     navigate('/login');
   };
@@ -51,14 +53,15 @@ const ProfilePage = () => {
   if (!user) {
     return <div>Could not load user profile.</div>
   }
+  
+  const imageSrc = user.profilePicture.startsWith('http') ? user.profilePicture : `http://localhost:5001/${user.profilePicture}`;
 
   return (
     <div className="container mx-auto p-8">
       <div className="card lg:card-side bg-base-100 shadow-xl">
         <figure className="p-8">
-            
-          <img 
-            src={`http://localhost:5001/${user.profilePicture}`} 
+            <img 
+            src={imageSrc}
             alt="Profile"
             className="rounded-full w-48 h-48 object-cover ring ring-primary ring-offset-base-100 ring-offset-2"
             />

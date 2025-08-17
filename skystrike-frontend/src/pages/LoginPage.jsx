@@ -1,6 +1,6 @@
-
+// src/pages/LoginPage.jsx
 import React, { useState } from 'react';
-import axios from 'axios';
+import API from '../api'; // Use the new API config
 import toast from 'react-hot-toast';
 import { useNavigate, Link } from 'react-router-dom';
 
@@ -12,25 +12,22 @@ const LoginPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const loginResponse = await axios.post('http://localhost:5001/api/auth/login', {
+      // Updated to use API.post
+      const loginResponse = await API.post('/auth/login', {
         email,
         password,
       });
 
       const token = loginResponse.data.token;
-      localStorage.setItem('token', token); // Save the token
+      localStorage.setItem('token', token);
 
-      // Immediately fetch user profile to get the role
-      const profileResponse = await axios.get('http://localhost:5001/api/auth/me', {
+      // Updated to use API.get
+      const profileResponse = await API.get('/auth/me', {
           headers: { Authorization: `Bearer ${token}` }
       });
 
-      // Save the user's role to localStorage
       localStorage.setItem('userRole', profileResponse.data.data.role);
-
       toast.success(loginResponse.data.message || 'Logged in successfully!');
-      
-      // Navigate to the profile page after successful login
       navigate('/profile');
     } catch (error) {
       toast.error(error.response?.data?.error || 'Login failed');
@@ -40,7 +37,6 @@ const LoginPage = () => {
   return (
     <div className="hero min-h-screen bg-base-200" style={{backgroundImage: 'url(/military-bg.jpg)'}}>
       <div className="hero-overlay bg-opacity-60"></div>
-      
       <div className="hero-content flex-col text-center">
         <div className="mb-8">
           <h1 className="text-5xl font-bold">
@@ -50,32 +46,15 @@ const LoginPage = () => {
           <p className="py-6 text-2xl">Enlist yourself into a journey of thrill commrade</p>
         </div>
         
-        {/* This is the login form card below */}
         <div className="card shrink-0 w-full max-w-sm shadow-2xl glass">
           <form className="card-body" onSubmit={handleSubmit}>
             <div className="form-control">
-              <label className="label">
-                <span className="label-text">Email</span>
-              </label>
-              <input 
-                type="email" 
-                placeholder="email" 
-                className="input input-bordered" 
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required />
+              <label className="label"><span className="label-text">Email</span></label>
+              <input type="email" placeholder="email" className="input input-bordered" value={email} onChange={(e) => setEmail(e.target.value)} required />
             </div>
             <div className="form-control">
-              <label className="label">
-                <span className="label-text">Password</span>
-              </label>
-              <input 
-                type="password" 
-                placeholder="password" 
-                className="input input-bordered"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required />
+              <label className="label"><span className="label-text">Password</span></label>
+              <input type="password" placeholder="password" className="input input-bordered" value={password} onChange={(e) => setPassword(e.target.value)} required />
             </div>
             <div className="form-control mt-6">
               <button type="submit" className="btn btn-primary">Login</button>

@@ -1,8 +1,8 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
-import axios from 'axios';
 import AircraftList from '../components/AircraftList';
 import AddAircraftForm from '../components/AddAircraftForm';
+import API from '../api';
 
 const DashboardPage = () => {
   const [aircrafts, setAircrafts] = useState([]);
@@ -16,7 +16,7 @@ const DashboardPage = () => {
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get('http://localhost:5001/api/aircrafts', {
+      const response = await API.get('/aircrafts', { // Use API.get without the full URL
           headers: { Authorization: `Bearer ${token}` }
       });
       setAircrafts(response.data.data);
