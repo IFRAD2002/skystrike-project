@@ -19,7 +19,7 @@ exports.register = async (req, res) => {
         // If a file was uploaded, add its path to our data object
         if (req.file) {
             // We store the path that the browser can use to access the image
-            pilotData.profilePicture = `uploads/${req.file.filename}`;
+            pilotData.profilePicture = req.file.path; // req.file.path is now a full URL from Cloudinary
         }
         
         const pilot = await Pilot.create(pilotData);

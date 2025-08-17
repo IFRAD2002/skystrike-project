@@ -19,11 +19,11 @@ exports.createAircraft = async (req, res) => {
     const { tailNumber, model, status } = req.body;
     const aircraftData = { tailNumber, model, status };
 
-    // Check if a file was uploaded
+    // If a file was uploaded, add its path to our data object
     if (req.file) {
-      // Save the path to the image
-      aircraftData.image = `uploads/${req.file.filename}`;
-    }
+        // We store the path that the browser can use to access the image
+        aircraftData.image = req.file.path; // req.file.path is now a full URL from Cloudinary
+    }        
 
     const aircraft = await Aircraft.create(aircraftData);
     res.status(201).json({ success: true, data: aircraft });
