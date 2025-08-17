@@ -1,6 +1,6 @@
 // src/components/AircraftList.jsx
 import React from 'react';
-import API from '../../api';
+import API from '../api'; // CORRECTED PATH
 import toast from 'react-hot-toast';
 
 const AircraftList = ({ aircrafts, fetchAircrafts }) => {
@@ -44,7 +44,6 @@ const AircraftList = ({ aircrafts, fetchAircrafts }) => {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
       {aircrafts.map((craft) => {
-        // --- THIS IS THE KEY CHANGE ---
         const imageSrc = craft.image.startsWith('http') 
             ? craft.image 
             : `${import.meta.env.VITE_API_URL.replace('/api', '')}/${craft.image}`;
