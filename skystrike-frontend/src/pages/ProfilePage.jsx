@@ -1,6 +1,6 @@
 // src/pages/ProfilePage.jsx
 import React, { useState, useEffect } from 'react';
-import API from '../api'; // Use the new API config
+import API from '../api';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
@@ -19,7 +19,6 @@ const ProfilePage = () => {
       }
 
       try {
-        // Updated to use API.get
         const response = await API.get('/auth/me', {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -54,7 +53,10 @@ const ProfilePage = () => {
     return <div>Could not load user profile.</div>
   }
   
-  const imageSrc = user.profilePicture.startsWith('http') ? user.profilePicture : `http://localhost:5001/${user.profilePicture}`;
+  // --- THIS IS THE KEY CHANGE ---
+  // We now construct the full public URL using the environment variable,
+  // just like we did for the aircraft list.
+  const imageSrc = `${import.meta.env.VITE_API_URL.replace('/api', '')}/${user.profilePicture}`;
 
   return (
     <div className="container mx-auto p-8">
