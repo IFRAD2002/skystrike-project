@@ -1,6 +1,6 @@
 // src/components/AddAircraftForm.jsx
 import React, { useState } from 'react';
-import API from '../../api'; // Use the new API config
+import API from '../api'; // CORRECTED PATH
 import toast from 'react-hot-toast';
 
 const AddAircraftForm = ({ onSuccess }) => {
@@ -22,7 +22,6 @@ const AddAircraftForm = ({ onSuccess }) => {
 
     try {
       const token = localStorage.getItem('token');
-      // Updated to use API.post
       await API.post('/aircrafts', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
