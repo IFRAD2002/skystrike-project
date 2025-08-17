@@ -54,9 +54,10 @@ const ProfilePage = () => {
   }
   
   // --- THIS IS THE KEY CHANGE ---
-  // We now construct the full public URL using the environment variable,
-  // just like we did for the aircraft list.
-  const imageSrc = `${import.meta.env.VITE_API_URL.replace('/api', '')}/${user.profilePicture}`;
+  // Check if the path is a full URL. If so, use it. Otherwise, build the URL.
+  const imageSrc = user.profilePicture.startsWith('http') 
+    ? user.profilePicture 
+    : `${import.meta.env.VITE_API_URL.replace('/api', '')}/${user.profilePicture}`;
 
   return (
     <div className="container mx-auto p-8">
