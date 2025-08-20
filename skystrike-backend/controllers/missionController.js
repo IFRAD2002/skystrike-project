@@ -2,6 +2,7 @@
 const Mission = require('../models/Mission');
 const Aircraft = require('../models/Aircraft');
 const Pilot = require('../models/Pilot');
+const Notification = require('../models/Notification');
 
 exports.getMissions = async (req, res) => {
   try {
@@ -47,26 +48,24 @@ exports.addAssignmentToMission = async (req, res) => {
 
         await mission.save();
 
-        // --- NEW NOTIFICATION LOGIC ---
+        const message = `New Assignment: You have been assigned to mission "${mission.objective}"`;
+        
+        // 2. Save the notification to the database
+        await Notification.create({
+            recipient: pilotId,
+            message: message,
+            mission: mission._id,
+        });
+
+        // 3. Send the real-time alert
         const io = req.app.get('socketio');
-        const onlineUsers = io.of('/').sockets; // This is a simple way to get the online users map from our server.js
-        
-        // This is a simplified way to find the user.
-        // In a real app, you'd have a more robust user session management.
-        let recipientSocketId = null;
-        for (let [id, socket] of onlineUsers) {
-            // Awaiting proper user management for socket rooms.
-            // For now we will broadcast, a more direct approach is better.
-        }
-        
-        // Let's broadcast the notification for simplicity. A better way is to target the specific user.
         io.emit("getNotification", {
             recipientId: pilotId,
-            message: `New Assignment: You have been assigned to mission "${mission.objective}"`
+            message: message,
         });
         
-        console.log(`Notification sent for pilot ${pilotId}`);
-        // --- END OF NOTIFICATION LOGIC ---
+        console.log(`Notification saved and sent for pilot ${pilotId}`);
+        // --- END OF LOGIC ---
 
         res.status(200).json({ success: true, data: mission });
 

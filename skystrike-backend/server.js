@@ -6,6 +6,7 @@ const connectDB = require('./config/db');
 const path = require('path');
 const http = require('http'); // 1. Import http
 const { Server } = require("socket.io"); // 2. Import Server from socket.io
+const notificationRoutes = require('./routes/notificationRoutes');
 
 // Load env vars
 dotenv.config();
@@ -43,6 +44,7 @@ app.use('/api/aircrafts', aircraftRoutes);
 app.use('/api/pilots', pilotRoutes);
 app.use('/api/missions', missionRoutes);
 app.use('/api/reports', reportsRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 // --- Socket.IO Connection Logic ---
 let onlineUsers = []; // Maps userId to socketId

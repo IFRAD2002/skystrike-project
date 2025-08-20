@@ -1,4 +1,4 @@
-
+// src/App.jsx
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
@@ -11,6 +11,7 @@ import ProfilePage from './pages/ProfilePage';
 import MissionsPage from './pages/MissionsPage';
 import AircraftDetailPage from './pages/AircraftDetailPage';
 import ReportsPage from './pages/ReportsPage';
+import NotificationsPage from './pages/NotificationsPage';
 
 // Import Layouts and Route Protection
 import ProtectedRoute from './components/ProtectedRoute';
@@ -19,7 +20,7 @@ import MainLayout from './components/MainLayout';
 function App() {
   return (
     <div data-theme="dark" className="min-h-screen bg-cover bg-center bg-fixed hero-overlay bg-opacity-60" 
-         style={{backgroundImage: 'url(https://images.unsplash.com/photo-1518365666497-654acc04138a?q=80&w=2938&auto=format&fit=crop)'}}>
+         style={{backgroundImage: 'url(/hangar-background.jpg)'}}>
       <Toaster />
       <Routes>
         {/* Public routes without the Navbar */}
@@ -33,6 +34,7 @@ function App() {
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/missions" element={<MissionsPage />} />
           <Route path="/reports" element={<ReportsPage />} />
+          <Route path="/notifications" element={<NotificationsPage />} />
         </Route>
       </Routes>
     </div>
