@@ -9,13 +9,16 @@ const ProfilePage = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   
-  const [selectedAssignment, setSelectedAssignment] = useState(null);
+  // This state now only needs to hold the mission ID
+  const [selectedMissionId, setSelectedMissionId] = useState(null);
   const [flightHours, setFlightHours] = useState('');
   const [flightDate, setFlightDate] = useState('');
 
   const navigate = useNavigate();
 
   const fetchProfile = async () => {
+    // This function can be simplified now, we'll keep it as is for consistency
+    // but the mission fetching is now fully in the child component.
     setLoading(true);
     const token = localStorage.getItem('token');
     if (!token) {
@@ -39,8 +42,9 @@ const ProfilePage = () => {
     fetchProfile();
   }, []);
 
-  const openLogModal = (missionId, assignmentId) => {
-    setSelectedAssignment({ missionId, assignmentId });
+  // The function now only takes the missionId
+  const openLogModal = (missionId) => {
+    setSelectedMissionId(missionId);
     setFlightDate(new Date().toISOString().split('T')[0]);
     setFlightHours('');
     document.getElementById('log_flight_modal').showModal();
@@ -50,8 +54,8 @@ const ProfilePage = () => {
     if (!flightHours || !flightDate) return toast.error('Please enter hours and a date.');
     try {
         const token = localStorage.getItem('token');
-        const { missionId, assignmentId } = selectedAssignment;
-        await API.put(`/missions/${missionId}/assignments/${assignmentId}/log`, 
+        // The API call is now simpler
+        await API.put(`/missions/${selectedMissionId}/log`, 
             { flightHours, flightDate },
             { headers: { Authorization: `Bearer ${token}` } }
         );

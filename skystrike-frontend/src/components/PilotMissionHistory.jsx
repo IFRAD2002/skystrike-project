@@ -53,7 +53,9 @@ const PilotMissionHistory = ({ user, openLogModal }) => {
                                         <td>{assignment.flightHoursLogged ? `${assignment.flightHoursLogged.toFixed(1)} hrs` : 'Pending'}</td>
                                         <td>
                                             {!assignment.flightHoursLogged && (
-                                                <button className="btn btn-primary btn-xs" onClick={() => openLogModal(assignment.missionId, assignment._id)}>
+                                                // --- THE KEY CHANGE IS HERE ---
+                                                // We now only pass the missionId
+                                                <button className="btn btn-primary btn-xs" onClick={() => openLogModal(assignment.missionId)}>
                                                     Log Flight
                                                 </button>
                                             )}
