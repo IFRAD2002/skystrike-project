@@ -52,6 +52,12 @@ const ProfilePage = () => {
 
   const handleLogFlightSubmit = async () => {
     if (!flightHours || !flightDate) return toast.error('Please enter hours and a date.');
+    const { missionId, assignmentId } = selectedAssignment;
+    console.log("Submitting to backend with these values:");
+    console.log("Mission ID:", missionId);
+    console.log("Assignment ID:", assignmentId);
+    console.log("Flight Hours:", flightHours);
+    console.log("Flight Date:", flightDate);
     try {
         const token = localStorage.getItem('token');
         // The API call is now simpler
