@@ -17,18 +17,17 @@ const AircraftList = ({ aircrafts, fetchAircrafts }) => {
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <div className="flex flex-col gap-4">
       {aircrafts.map((craft) => (
-        <Link to={`/aircraft/${craft._id}`} key={craft._id} className="card w-full h-80 shadow-xl image-full transition-transform transform hover:scale-105">
-          <figure>
+        <Link to={`/aircraft/${craft._id}`} key={craft._id} className="card lg:card-side bg-base-100 shadow-xl transition-transform transform hover:scale-[1.02]">
+          <figure className="lg:w-1/3">
             <img 
               src={craft.image.startsWith('http') ? craft.image : `${import.meta.env.VITE_API_URL.replace('/api', '')}/${craft.image}`} 
               alt={craft.model} 
               className="object-cover w-full h-full" 
             />
           </figure>
-          {/* We wrap the card-body in another div to make it glass */}
-          <div className="card-body glass rounded-2xl m-4">
+          <div className="card-body lg:w-2/3">
             <div className="flex justify-between items-start">
               <div>
                 <h2 className="card-title text-2xl">{craft.model}</h2>
@@ -41,10 +40,7 @@ const AircraftList = ({ aircrafts, fetchAircrafts }) => {
                 {craft.status}
               </div>
             </div>
-
-            <div className="flex-grow"></div>
-
-            <div className="card-actions justify-end items-center">
+            <div className="card-actions justify-end items-center mt-4">
               {userRole && (
                 <select 
                   className="select select-bordered select-sm" 
