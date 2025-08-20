@@ -51,7 +51,7 @@ const AircraftList = ({ aircrafts, fetchAircrafts }) => {
       {aircrafts.map((craft) => (
         <Link to={`/aircraft/${craft._id}`} key={craft._id} className="card w-full bg-base-100 shadow-xl transition-transform transform hover:scale-105">
           {/* The <figure> with a fixed height is the key to the larger size */}
-          <figure className="h-80">
+          <figure className="h-96">
             <img 
               src={craft.image.startsWith('http') ? craft.image : `${import.meta.env.VITE_API_URL.replace('/api', '')}/${craft.image}`} 
               alt={craft.model} 
