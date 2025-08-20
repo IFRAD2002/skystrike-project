@@ -19,27 +19,37 @@ const AircraftList = ({ aircrafts, fetchAircrafts }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
       {aircrafts.map((craft) => (
-        <Link to={`/aircraft/${craft._id}`} key={craft._id} className="card w-full bg-base-100 shadow-xl transition-transform transform hover:scale-105">
-          <figure className="h-56">
-            <img 
-              src={craft.image.startsWith('http') ? craft.image : `${import.meta.env.VITE_API_URL.replace('/api', '')}/${craft.image}`} 
-              alt={craft.model} 
-              className="object-cover w-full h-full" 
-            />
-          </figure>
-          <div className="card-body p-6">
-            <div className="flex justify-between items-start">
+        <Link to={`/aircraft/${craft._id}`} key={craft._id} className="card w-full bg-base-100 shadow-xl transition-all duration-300 hover:shadow-2xl hover:border-primary border-2 border-transparent">
+          <div className="card-body">
+            {/* Header section with avatar and title */}
+            <div className="flex items-center gap-4 mb-4">
+              <div className="avatar">
+                <div className="w-16 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
+                  <img src={craft.image.startsWith('http') ? craft.image : `${import.meta.env.VITE_API_URL.replace('/api', '')}/${craft.image}`} alt={craft.model} />
+                </div>
+              </div>
               <div>
                 <h2 className="card-title text-xl">{craft.model}</h2>
-                <p className="font-mono text-sm">{craft.tailNumber}</p>
-              </div>
-              <div className={`badge ${
-                  craft.status === 'ACTIVE' ? 'badge-success' :
-                  craft.status === 'IN_MAINTENANCE' ? 'badge-warning' : 'badge-error'
-              }`}>
-                {craft.status}
+                <p className="font-mono text-sm opacity-70">{craft.tailNumber}</p>
               </div>
             </div>
+            
+            {/* Stats Section */}
+            <div className="stats stats-vertical shadow w-full">
+              <div className="stat">
+                <div className="stat-title">Status</div>
+                <div className={`stat-value text-lg ${
+                  craft.status === 'ACTIVE' ? 'text-success' :
+                  craft.status === 'IN_MAINTENANCE' ? 'text-warning' : 'text-error'
+                }`}>{craft.status}</div>
+              </div>
+              <div className="stat">
+                <div className="stat-title">Last Updated</div>
+                <div className="stat-value text-lg">{new Date(craft.updatedAt).toLocaleDateString()}</div>
+              </div>
+            </div>
+
+            {/* Actions at the bottom */}
             <div className="card-actions justify-end items-center mt-4">
               {userRole && (
                 <select 
