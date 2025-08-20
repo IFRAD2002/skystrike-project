@@ -1,12 +1,15 @@
 // src/components/AircraftList.jsx
 import React from 'react';
-import API from '../api'; // CORRECTED PATH
+import API from '../../api';
 import toast from 'react-hot-toast';
+import { Link } from 'react-router-dom';
 
 const AircraftList = ({ aircrafts, fetchAircrafts }) => {
   const userRole = localStorage.getItem('userRole');
 
-  const handleStatusChange = async (aircraftId, newStatus) => {
+  const handleStatusChange = async (e, aircraftId, newStatus) => {
+    e.stopPropagation(); // Prevent the Link from being triggered
+    e.preventDefault();
     try {
       const token = localStorage.getItem('token');
       await API.put(
@@ -21,7 +24,9 @@ const AircraftList = ({ aircrafts, fetchAircrafts }) => {
     }
   };
 
-  const handleDelete = async (aircraftId) => {
+  const handleDelete = async (e, aircraftId) => {
+    e.stopPropagation(); // Prevent the Link from being triggered
+    e.preventDefault();
     if (!window.confirm('Are you sure you want to delete this aircraft? This action cannot be undone.')) {
       return;
     }
@@ -43,52 +48,50 @@ const AircraftList = ({ aircrafts, fetchAircrafts }) => {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-      {aircrafts.map((craft) => {
-        const imageSrc = craft.image.startsWith('http') 
-            ? craft.image 
-            : `${import.meta.env.VITE_API_URL.replace('/api', '')}/${craft.image}`;
-        
-        return (
-            <div key={craft._id} className="card w-full bg-base-100 shadow-xl image-full" style={{ '--tw-bg-opacity': '0.35' }}>
-                <figure>
-                    <img src={imageSrc} alt={craft.model} className="object-cover w-full h-full" />
-                </figure>
-                <div className="card-body">
-                    <div className="flex justify-between items-start">
-                        <div>
-                        <h2 className="card-title text-2xl">{craft.model}</h2>
-                        <p className="font-mono">{craft.tailNumber}</p>
-                        </div>
-                        <div className={`badge badge-lg ${
-                            craft.status === 'ACTIVE' ? 'badge-success' :
-                            craft.status === 'IN_MAINTENANCE' ? 'badge-warning' : 'badge-error'
-                        }`}>
-                        {craft.status}
-                        </div>
-                    </div>
-                    <div className="flex-grow"></div>
-                    <div className="card-actions justify-end items-center">
-                        {userRole && (
-                        <select 
-                            className="select select-bordered select-sm" 
-                            value={craft.status}
-                            onChange={(e) => handleStatusChange(craft._id, e.target.value)}
-                        >
-                            <option value="ACTIVE">Active</option>
-                            <option value="IN_MAINTENANCE">In Maintenance</option>
-                            <option value="OUT_OF_SERVICE">Out of Service</option>
-                        </select>
-                        )}
-                        {userRole === 'Air Battle Manager' && (
-                        <button onClick={() => handleDelete(craft._id)} className="btn btn-error btn-sm">
-                            Decommission
-                        </button>
-                        )}
-                    </div>
-                </div>
+      {aircrafts.map((craft) => (
+        <Link to={`/aircraft/${craft._id}`} key={craft._id} className="card w-full bg-base-100 shadow-xl image-full transform transition-transform hover:scale-105">
+          <figure className="h-56">
+            <img src={craft.image.startsWith('http') ? craft.image : `${import.meta.env.VITE_API_URL.replace('/api', '')}/${craft.image}`} alt={craft.model} className="object-cover w-full h-full" />
+          </figure>
+          <div className="card-body">
+            <div className="flex justify-between items-start">
+              <div>
+                <h2 className="card-title text-2xl">{craft.model}</h2>
+                <p className="font-mono">{craft.tailNumber}</p>
+              </div>
+              <div className={`badge badge-lg ${
+                  craft.status === 'ACTIVE' ? 'badge-success' :
+                  craft.status === 'IN_MAINTENANCE' ? 'badge-warning' : 'badge-error'
+              }`}>
+                {craft.status}
+              </div>
             </div>
-        )}
-      )}
+
+            <div className="flex-grow"></div>
+
+            <div className="card-actions justify-end items-center">
+              {userRole && (
+                <select 
+                  className="select select-bordered select-sm" 
+                  value={craft.status}
+                  onClick={(e) => e.stopPropagation()} // Stop propagation here too
+                  onChange={(e) => handleStatusChange(e, craft._id, e.target.value)}
+                >
+                  <option value="ACTIVE">Active</option>
+                  <option value="IN_MAINTENANCE">In Maintenance</option>
+                  <option value="OUT_OF_SERVICE">Out of Service</option>
+                </select>
+              )}
+
+              {userRole === 'Air Battle Manager' && (
+                <button onClick={(e) => handleDelete(e, craft._id)} className="btn btn-error btn-sm">
+                  Decommission
+                </button>
+              )}
+            </div>
+          </div>
+        </Link>
+      ))}
     </div>
   );
 };

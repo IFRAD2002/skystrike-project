@@ -32,7 +32,10 @@ const Navbar = () => {
         <ul className="menu menu-horizontal px-1">
           <li><NavLink to="/" style={({ isActive }) => isActive ? activeLinkStyle : undefined}>Dashboard</NavLink></li>
           {userRole === 'Air Battle Manager' && (
-            <li><NavLink to="/missions" style={({ isActive }) => isActive ? activeLinkStyle : undefined}>Missions</NavLink></li>
+            <>
+              <li><NavLink to="/missions" style={({ isActive }) => isActive ? activeLinkStyle : undefined}>Missions</NavLink></li>
+              <li><NavLink to="/reports" style={({ isActive }) => isActive ? activeLinkStyle : undefined}>Reports</NavLink></li> {/* Add this */}
+            </>
           )}
           <li>
             <details>

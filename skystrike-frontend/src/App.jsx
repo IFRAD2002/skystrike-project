@@ -9,6 +9,8 @@ import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
 import ProfilePage from './pages/ProfilePage';
 import MissionsPage from './pages/MissionsPage';
+import AircraftDetailPage from './pages/AircraftDetailPage';
+import ReportsPage from './pages/ReportsPage';
 
 // Import Layouts and Route Protection
 import ProtectedRoute from './components/ProtectedRoute';
@@ -27,8 +29,10 @@ function App() {
         {/* Parent route for all protected pages that WILL have the Navbar */}
         <Route element={<ProtectedRoute><MainLayout /></ProtectedRoute>}>
           <Route path="/" element={<DashboardPage />} />
+          <Route path="/aircraft/:id" element={<AircraftDetailPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/missions" element={<MissionsPage />} />
+          <Route path="/reports" element={<ReportsPage />} />
         </Route>
       </Routes>
     </div>

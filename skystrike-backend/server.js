@@ -13,6 +13,7 @@ const authRoutes = require('./routes/authRoutes');
 const aircraftRoutes = require('./routes/aircraftRoutes');
 const pilotRoutes = require('./routes/pilotRoutes');
 const missionRoutes = require('./routes/missionRoutes');
+const reportsRoutes = require('./routes/reportsRoutes');
 
 const app = express();
 
@@ -34,6 +35,7 @@ app.use('/api/auth', authRoutes)
 app.use('/api/aircrafts', aircraftRoutes);
 app.use('/api/pilots', pilotRoutes);
 app.use('/api/missions', missionRoutes);
+app.use('/api/reports', reportsRoutes);
 
 const PORT = process.env.PORT || 5001;
 

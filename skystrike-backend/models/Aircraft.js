@@ -1,4 +1,4 @@
-
+// models/Aircraft.js
 const mongoose = require('mongoose');
 
 const aircraftSchema = new mongoose.Schema(
@@ -21,11 +21,22 @@ const aircraftSchema = new mongoose.Schema(
     },
     image: {
       type: String,
-      default: 'uploads/no-jet-photo.jpg', // A default image
+      default: 'uploads/no-jet-photo.jpg',
     },
+    // --- NEW FIELDS START HERE ---
+    scheduledMaintenanceDate: {
+      type: Date,
+      required: false,
+    },
+    scheduledMaintenanceNotes: {
+      type: String,
+      required: false,
+      trim: true,
+    },
+    // --- NEW FIELDS END HERE ---
   },
   {
-    timestamps: true, // Adds createdAt and updatedAt fields
+    timestamps: true,
   }
 );
 

@@ -1,0 +1,10 @@
+// routes/reportsRoutes.js
+const express = require('express');
+const { getSortieReport } = require('../controllers/reportsController');
+const { protect, authorize } = require('../middleware/authMiddleware');
+
+const router = express.Router();
+
+router.route('/sorties').get(protect, authorize('Air Battle Manager'), getSortieReport);
+
+module.exports = router;
