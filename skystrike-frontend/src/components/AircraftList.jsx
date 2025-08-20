@@ -17,23 +17,23 @@ const AircraftList = ({ aircrafts, fetchAircrafts }) => {
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
       {aircrafts.map((craft) => (
-        <Link to={`/aircraft/${craft._id}`} key={craft._id} className="card lg:card-side bg-base-100 shadow-xl transition-transform transform hover:scale-[1.02]">
-          <figure className="lg:w-1/3">
+        <Link to={`/aircraft/${craft._id}`} key={craft._id} className="card w-full bg-base-100 shadow-xl transition-transform transform hover:scale-105">
+          <figure className="h-56">
             <img 
               src={craft.image.startsWith('http') ? craft.image : `${import.meta.env.VITE_API_URL.replace('/api', '')}/${craft.image}`} 
               alt={craft.model} 
               className="object-cover w-full h-full" 
             />
           </figure>
-          <div className="card-body lg:w-2/3">
+          <div className="card-body p-6">
             <div className="flex justify-between items-start">
               <div>
-                <h2 className="card-title text-2xl">{craft.model}</h2>
-                <p className="font-mono">{craft.tailNumber}</p>
+                <h2 className="card-title text-xl">{craft.model}</h2>
+                <p className="font-mono text-sm">{craft.tailNumber}</p>
               </div>
-              <div className={`badge badge-lg ${
+              <div className={`badge ${
                   craft.status === 'ACTIVE' ? 'badge-success' :
                   craft.status === 'IN_MAINTENANCE' ? 'badge-warning' : 'badge-error'
               }`}>
@@ -43,7 +43,7 @@ const AircraftList = ({ aircrafts, fetchAircrafts }) => {
             <div className="card-actions justify-end items-center mt-4">
               {userRole && (
                 <select 
-                  className="select select-bordered select-sm" 
+                  className="select select-bordered select-xs" 
                   value={craft.status}
                   onClick={(e) => e.stopPropagation()}
                   onChange={(e) => handleStatusChange(e, craft._id, e.target.value)}
@@ -54,7 +54,7 @@ const AircraftList = ({ aircrafts, fetchAircrafts }) => {
                 </select>
               )}
               {userRole === 'Air Battle Manager' && (
-                <button onClick={(e) => handleDelete(e, craft._id)} className="btn btn-error btn-sm">
+                <button onClick={(e) => handleDelete(e, craft._id)} className="btn btn-error btn-xs">
                   Decommission
                 </button>
               )}
