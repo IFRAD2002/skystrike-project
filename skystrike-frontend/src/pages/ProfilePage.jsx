@@ -9,7 +9,6 @@ const ProfilePage = () => {
   const [missions, setMissions] = useState([]);
   const [loading, setLoading] = useState(true);
   
-  // State for the flight log modal
   const [selectedAssignment, setSelectedAssignment] = useState(null);
   const [flightHours, setFlightHours] = useState('');
   const [flightDate, setFlightDate] = useState('');
@@ -24,15 +23,14 @@ const ProfilePage = () => {
       return;
     }
     try {
+      setLoading(true); // Set loading true at the start of fetch
       const headers = { Authorization: `Bearer ${token}` };
-      // Only fetch missions if the user is a Pilot
-      const profileRes = await API.get('/auth/me', { headers });
+      const [profileRes, missionsRes] = await Promise.all([
+        API.get('/auth/me', { headers }),
+        API.get('/missions', { headers }),
+      ]);
       setUser(profileRes.data.data);
-
-      if (profileRes.data.data.role === 'Pilot') {
-        const missionsRes = await API.get('/missions', { headers });
-        setMissions(missionsRes.data.data);
-      }
+      setMissions(missionsRes.data.data);
     } catch (error) {
       console.error('Failed to fetch data', error);
       toast.error('Session expired. Please log in again.');
@@ -47,9 +45,9 @@ const ProfilePage = () => {
     fetchData();
   }, [fetchData]);
 
-  const openLogModal = (mission, assignment) => {
-    setSelectedAssignment({ missionId: mission._id, assignmentId: assignment._id });
-    setFlightDate(new Date().toISOString().split('T')[0]); // Default to today
+  const openLogModal = (missionId, assignmentId) => {
+    setSelectedAssignment({ missionId, assignmentId });
+    setFlightDate(new Date().toISOString().split('T')[0]);
     setFlightHours('');
     document.getElementById('log_flight_modal').showModal();
   };
@@ -65,7 +63,7 @@ const ProfilePage = () => {
         );
         toast.success("Flight hours logged!");
         document.getElementById('log_flight_modal').close();
-        fetchData(); // Refresh all data
+        fetchData();
     } catch (error) {
         toast.error(error.response?.data?.error || "Failed to log hours.");
     }
@@ -83,38 +81,32 @@ const ProfilePage = () => {
 
   const imageSrc = user.profilePicture.startsWith('http') ? user.profilePicture : `${import.meta.env.VITE_API_URL.replace('/api', '')}/${user.profilePicture}`;
   
-  // Filter for completed missions assigned to this pilot
-  const completedMissions = missions.filter(m => 
-    m.status === 'COMPLETED' && m.assignments.some(a => a.pilot._id === user._id)
-  );
+  // Create a flattened list of the user's completed assignments
+  const completedAssignments = missions
+    .filter(m => m.status === 'COMPLETED')
+    .flatMap(m => 
+      m.assignments
+        .filter(a => a.pilot._id === user._id)
+        .map(a => ({ ...a, missionObjective: m.objective, missionId: m._id })) // Add mission info to each assignment
+    );
 
   return (
     <div className="container mx-auto p-8 space-y-8">
       {/* Profile Card */}
       <div className="card lg:card-side bg-base-100 shadow-xl">
-        <figure className="p-8">
-            <img 
-            src={imageSrc}
-            alt="Profile"
-            className="rounded-full w-48 h-48 object-cover ring ring-primary ring-offset-base-100 ring-offset-2"
-            />
-        </figure>
+        <figure className="p-8"><img src={imageSrc} alt="Profile" className="rounded-full w-48 h-48 object-cover ring ring-primary ring-offset-base-100 ring-offset-2"/></figure>
         <div className="card-body">
           <h2 className="card-title text-4xl">{user.name}</h2>
           <p className="text-2xl text-accent">"{user.callsign}"</p>
           <div className="divider"></div>
           <p><strong>Role:</strong> {user.role}</p>
           <p><strong>Email:</strong> {user.email}</p>
-          {/* Only show flight hours for Pilots */}
           {user.role === 'Pilot' && <p><strong>Flight Hours:</strong> {user.flightHours.toFixed(1)}</p>}
-          <div className="card-actions justify-end mt-4">
-            <button onClick={handleLogout} className="btn btn-outline btn-error">Logout</button>
-          </div>
+          <div className="card-actions justify-end mt-4"><button onClick={handleLogout} className="btn btn-outline btn-error">Logout</button></div>
         </div>
       </div>
 
-      {/* --- THIS IS THE KEY CHANGE --- */}
-      {/* Only show the Mission History card if the user is a Pilot */}
+      {/* Completed Mission History Card */}
       {user.role === 'Pilot' && (
         <div className="card bg-base-100 shadow-xl">
           <div className="card-body">
@@ -123,26 +115,21 @@ const ProfilePage = () => {
               <table className="table">
                 <thead><tr><th>Objective</th><th>Aircraft</th><th>Hours Logged</th><th>Actions</th></tr></thead>
                 <tbody>
-                  {completedMissions.length > 0 ? (
-                      completedMissions.map(m => {
-                          const assignment = m.assignments.find(a => a.pilot._id === user._id);
-                          // Add a check to ensure assignment is found before rendering
-                          if (!assignment) return null;
-                          return (
-                              <tr key={assignment._id}>
-                                  <td>{m.objective}</td>
-                                  <td>{assignment.aircraft.tailNumber}</td>
-                                  <td>{assignment.flightHoursLogged ? `${assignment.flightHoursLogged.toFixed(1)} hrs` : 'Pending'}</td>
-                                  <td>
-                                      {!assignment.flightHoursLogged && (
-                                          <button className="btn btn-primary btn-xs" onClick={() => openLogModal(m, assignment)}>
-                                              Log Flight
-                                          </button>
-                                      )}
-                                  </td>
-                              </tr>
-                          )
-                      })
+                  {completedAssignments.length > 0 ? (
+                      completedAssignments.map(assignment => (
+                        <tr key={assignment._id}>
+                            <td>{assignment.missionObjective}</td>
+                            <td>{assignment.aircraft.tailNumber}</td>
+                            <td>{assignment.flightHoursLogged ? `${assignment.flightHoursLogged.toFixed(1)} hrs` : 'Pending'}</td>
+                            <td>
+                                {!assignment.flightHoursLogged && (
+                                    <button className="btn btn-primary btn-xs" onClick={() => openLogModal(assignment.missionId, assignment._id)}>
+                                        Log Flight
+                                    </button>
+                                )}
+                            </td>
+                        </tr>
+                      ))
                   ) : (
                       <tr><td colSpan="4" className='text-center'>No completed missions found.</td></tr>
                   )}
@@ -158,19 +145,10 @@ const ProfilePage = () => {
         <div className="modal-box">
           <h3 className="font-bold text-lg">Log Flight Hours</h3>
           <div className="py-4 space-y-4">
-            <div>
-                <label className="label"><span className="label-text">Flight Date</span></label>
-                <input type="date" className="input input-bordered w-full" value={flightDate} onChange={(e) => setFlightDate(e.target.value)} />
-            </div>
-            <div>
-                <label className="label"><span className="label-text">Hours Flown</span></label>
-                <input type="number" step="0.1" placeholder="e.g., 2.5" className="input input-bordered w-full" value={flightHours} onChange={(e) => setFlightHours(e.target.value)} />
-            </div>
+            <div><label className="label"><span className="label-text">Flight Date</span></label><input type="date" className="input input-bordered w-full" value={flightDate} onChange={(e) => setFlightDate(e.target.value)} /></div>
+            <div><label className="label"><span className="label-text">Hours Flown</span></label><input type="number" step="0.1" placeholder="e.g., 2.5" className="input input-bordered w-full" value={flightHours} onChange={(e) => setFlightHours(e.target.value)} /></div>
           </div>
-          <div className="modal-action">
-            <button onClick={handleLogFlightSubmit} className="btn btn-primary">Submit Log</button>
-            <form method="dialog"><button className="btn">Cancel</button></form>
-          </div>
+          <div className="modal-action"><button onClick={handleLogFlightSubmit} className="btn btn-primary">Submit Log</button><form method="dialog"><button className="btn">Cancel</button></form></div>
         </div>
       </dialog>
     </div>
