@@ -17,41 +17,37 @@ const AircraftList = ({ aircrafts, fetchAircrafts }) => {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+    // This is the key change: we use flex-col to force a single column
+    <div className="flex flex-col gap-8">
       {aircrafts.map((craft) => (
-        <Link to={`/aircraft/${craft._id}`} key={craft._id} className="card w-full bg-base-100 shadow-xl transition-all duration-300 hover:shadow-2xl hover:border-primary border-2 border-transparent">
-          {/* Large, prominent image at the top */}
-          <figure className="h-56">
+        <Link to={`/aircraft/${craft._id}`} key={craft._id} className="card lg:card-side bg-base-100 shadow-xl transition-transform transform hover:scale-[1.02]">
+          <figure className="lg:w-1/3 h-64 lg:h-auto">
             <img 
               src={craft.image.startsWith('http') ? craft.image : `${import.meta.env.VITE_API_URL.replace('/api', '')}/${craft.image}`} 
               alt={craft.model} 
               className="object-cover w-full h-full" 
             />
           </figure>
-
-          <div className="card-body p-6">
-            {/* Title and Callsign */}
-            <div>
-              <h2 className="card-title text-xl">{craft.model}</h2>
-              <p className="font-mono text-sm opacity-70">{craft.tailNumber}</p>
-            </div>
-            
-            {/* Stats Component for the key data */}
-            <div className="stats stats-vertical shadow w-full my-4">
-              <div className="stat">
-                <div className="stat-title">Status</div>
-                <div className={`stat-value text-lg ${
-                  craft.status === 'ACTIVE' ? 'text-success' :
-                  craft.status === 'IN_MAINTENANCE' ? 'text-warning' : 'text-error'
-                }`}>{craft.status}</div>
+          <div className="card-body lg:w-2/3">
+            <div className="flex justify-between items-start">
+              <div>
+                <h2 className="card-title text-3xl">{craft.model}</h2>
+                <p className="font-mono text-lg">{craft.tailNumber}</p>
+              </div>
+              <div className={`badge badge-lg ${
+                  craft.status === 'ACTIVE' ? 'badge-success' :
+                  craft.status === 'IN_MAINTENANCE' ? 'badge-warning' : 'badge-error'
+              }`}>
+                {craft.status}
               </div>
             </div>
+            
+            <div className="flex-grow"></div>
 
-            {/* Actions at the bottom */}
-            <div className="card-actions justify-end items-center">
+            <div className="card-actions justify-end items-center mt-4">
               {userRole && (
                 <select 
-                  className="select select-bordered select-xs" 
+                  className="select select-bordered select-sm" 
                   value={craft.status}
                   onClick={(e) => e.stopPropagation()}
                   onChange={(e) => handleStatusChange(e, craft._id, e.target.value)}
@@ -62,7 +58,7 @@ const AircraftList = ({ aircrafts, fetchAircrafts }) => {
                 </select>
               )}
               {userRole === 'Air Battle Manager' && (
-                <button onClick={(e) => handleDelete(e, craft._id)} className="btn btn-error btn-xs">
+                <button onClick={(e) => handleDelete(e, craft._id)} className="btn btn-error btn-sm">
                   Decommission
                 </button>
               )}
