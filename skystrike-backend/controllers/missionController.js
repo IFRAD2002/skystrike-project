@@ -47,6 +47,27 @@ exports.addAssignmentToMission = async (req, res) => {
 
         await mission.save();
 
+        // --- NEW NOTIFICATION LOGIC ---
+        const io = req.app.get('socketio');
+        const onlineUsers = io.of('/').sockets; // This is a simple way to get the online users map from our server.js
+        
+        // This is a simplified way to find the user.
+        // In a real app, you'd have a more robust user session management.
+        let recipientSocketId = null;
+        for (let [id, socket] of onlineUsers) {
+            // Awaiting proper user management for socket rooms.
+            // For now we will broadcast, a more direct approach is better.
+        }
+        
+        // Let's broadcast the notification for simplicity. A better way is to target the specific user.
+        io.emit("getNotification", {
+            recipientId: pilotId,
+            message: `New Assignment: You have been assigned to mission "${mission.objective}"`
+        });
+        
+        console.log(`Notification sent for pilot ${pilotId}`);
+        // --- END OF NOTIFICATION LOGIC ---
+
         res.status(200).json({ success: true, data: mission });
 
     } catch (error) {
