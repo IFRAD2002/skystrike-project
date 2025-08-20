@@ -1,7 +1,7 @@
 // controllers/aircraftController.js
 const Aircraft = require('../models/Aircraft');
 
-// --- NEW HELPER FUNCTION ---
+// --- HELPER FUNCTION ---
 // This function checks a single aircraft and updates its status if needed.
 const checkAndUpdateMaintenanceStatus = async (aircraft) => {
   if (aircraft.scheduledMaintenanceDate && aircraft.status === 'ACTIVE') {
@@ -46,7 +46,7 @@ exports.createAircraft = async (req, res) => {
     const aircraftData = { tailNumber, model, status };
 
     if (req.file) {
-      aircraftData.image = req.file.path;
+      aircraftData.image = `uploads/${req.file.filename}`; // Or req.file.path for Cloudinary
     }
 
     const aircraft = await Aircraft.create(aircraftData);
@@ -78,18 +78,29 @@ exports.getAircraftById = async (req, res) => {
 // @route   PUT /api/aircrafts/:id
 exports.updateAircraft = async (req, res) => {
     try {
-        let aircraft = await Aircraft.findById(req.params.id);
+        const aircraft = await Aircraft.findById(req.params.id);
 
         if (!aircraft) {
             return res.status(404).json({ success: false, error: 'Aircraft not found' });
         }
+        
+        // If status is changing from IN_MAINTENANCE to ACTIVE, clear the schedule
+        if (
+            aircraft.status === 'IN_MAINTENANCE' && 
+            req.body.status === 'ACTIVE' &&
+            aircraft.scheduledMaintenanceDate
+        ) {
+            req.body.scheduledMaintenanceDate = null;
+            req.body.scheduledMaintenanceNotes = '';
+            console.log(`Maintenance for ${aircraft.tailNumber} completed. Clearing schedule.`);
+        }
 
-        aircraft = await Aircraft.findByIdAndUpdate(req.params.id, req.body, {
+        const updatedAircraft = await Aircraft.findByIdAndUpdate(req.params.id, req.body, {
             new: true,
             runValidators: true
         });
 
-        res.status(200).json({ success: true, data: aircraft });
+        res.status(200).json({ success: true, data: updatedAircraft });
     } catch (error) {
         res.status(500).json({ success: false, error: 'Server Error' });
     }
