@@ -5,10 +5,11 @@ const {
   createMission,
   updateMissionStatus,
   addAssignmentToMission,
+  logFlightHours,
 } = require('../controllers/missionController');
 const { protect, authorize } = require('../middleware/authMiddleware');
 
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
 
 router.route('/')
     .get(protect, getMissions) 
@@ -17,9 +18,9 @@ router.route('/')
 router.route('/:id/status')
     .put(protect, authorize('Air Battle Manager'), updateMissionStatus);
 
-// Our new admin-only assignment route
 router.route('/:id/assign')
     .put(protect, authorize('Air Battle Manager'), addAssignmentToMission);
 
+router.route('/:missionId/assignments/:assignmentId/log').put(protect, logFlightHours);
 
 module.exports = router;

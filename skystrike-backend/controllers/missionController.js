@@ -94,4 +94,47 @@ exports.updateMissionStatus = async (req, res) => {
     }
 };
 
+// @desc    Log flight hours for a specific assignment in a mission
+// @route   PUT /api/missions/:missionId/assignments/:assignmentId/log
+exports.logFlightHours = async (req, res) => {
+    try {
+        const { flightHours, flightDate } = req.body;
+        const { missionId, assignmentId } = req.params;
+        
+        const mission = await Mission.findById(missionId);
+        if (!mission) {
+            return res.status(404).json({ success: false, error: 'Mission not found' });
+        }
+
+        // Find the specific assignment within the mission
+        const assignment = mission.assignments.id(assignmentId);
+        if (!assignment) {
+            return res.status(404).json({ success: false, error: 'Assignment not found' });
+        }
+        
+        // Authorization: Check if the logged-in user is the pilot in the assignment
+        if (assignment.pilot.toString() !== req.user.id) {
+            return res.status(403).json({ success: false, error: 'User not authorized to log hours for this assignment' });
+        }
+        
+        // Update the assignment with the logged hours and date
+        assignment.flightHoursLogged = flightHours;
+        assignment.flightDate = flightDate;
+        
+        // Update the pilot's total flight hours
+        const pilot = await Pilot.findById(assignment.pilot);
+        pilot.flightHours += Number(flightHours);
+        
+        // Save both documents
+        await pilot.save();
+        await mission.save();
+
+        res.status(200).json({ success: true, data: mission });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, error: 'Server Error' });
+    }
+};
+
 
