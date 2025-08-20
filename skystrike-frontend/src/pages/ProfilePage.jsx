@@ -1,12 +1,12 @@
 // src/pages/ProfilePage.jsx
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import API from '../api';
 import { useNavigate, Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import PilotMissionHistory from '../components/PilotMissionHistory';
 
 const ProfilePage = () => {
   const [user, setUser] = useState(null);
-  const [missions, setMissions] = useState([]);
   const [loading, setLoading] = useState(true);
   
   const [selectedAssignment, setSelectedAssignment] = useState(null);
@@ -15,39 +15,29 @@ const ProfilePage = () => {
 
   const navigate = useNavigate();
 
-  // We've separated the fetch logic from the useEffect to make it cleaner
-  const fetchData = useCallback(async () => {
+  const fetchProfile = async () => {
     setLoading(true);
     const token = localStorage.getItem('token');
     if (!token) {
       toast.error('You must be logged in.');
-      navigate('/login');
-      return;
+      return navigate('/login');
     }
-
     try {
       const headers = { Authorization: `Bearer ${token}` };
       const profileRes = await API.get('/auth/me', { headers });
-      const currentUser = profileRes.data.data;
-      setUser(currentUser);
-
-      if (currentUser.role === 'Pilot') {
-        const missionsRes = await API.get('/missions', { headers });
-        setMissions(missionsRes.data.data);
-      }
+      setUser(profileRes.data.data);
     } catch (error) {
-      console.error('Failed to fetch data', error);
       toast.error('Session expired. Please log in again.');
       localStorage.clear();
       navigate('/login');
     } finally {
       setLoading(false);
     }
-  }, [navigate]); // useCallback now only depends on navigate
+  };
 
   useEffect(() => {
-    fetchData();
-  }, [fetchData]); // useEffect now only depends on the stable fetchData function
+    fetchProfile();
+  }, []);
 
   const openLogModal = (missionId, assignmentId) => {
     setSelectedAssignment({ missionId, assignmentId });
@@ -67,7 +57,8 @@ const ProfilePage = () => {
         );
         toast.success("Flight hours logged!");
         document.getElementById('log_flight_modal').close();
-        fetchData();
+        // Re-fetch profile to update total flight hours
+        fetchProfile(); 
     } catch (error) {
         toast.error(error.response?.data?.error || "Failed to log hours.");
     }
@@ -84,14 +75,6 @@ const ProfilePage = () => {
   if (!user) return <div>Could not load user profile.</div>;
 
   const imageSrc = user.profilePicture.startsWith('http') ? user.profilePicture : `${import.meta.env.VITE_API_URL.replace('/api', '')}/${user.profilePicture}`;
-  
-  const completedAssignments = user.role === 'Pilot' ? missions
-    .filter(m => m.status === 'COMPLETED')
-    .flatMap(m => 
-      m.assignments
-        .filter(a => a.pilot._id === user._id)
-        .map(a => ({ ...a, missionObjective: m.objective, missionId: m._id }))
-    ) : [];
 
   return (
     <div className="container mx-auto p-8 space-y-8">
@@ -109,39 +92,8 @@ const ProfilePage = () => {
         </div>
       </div>
 
-      {/* Completed Mission History Card */}
-      {user.role === 'Pilot' && (
-        <div className="card bg-base-100 shadow-xl">
-          <div className="card-body">
-            <h2 className="card-title">Completed Mission History</h2>
-            <div className="overflow-x-auto">
-              <table className="table">
-                <thead><tr><th>Objective</th><th>Aircraft</th><th>Hours Logged</th><th>Actions</th></tr></thead>
-                <tbody>
-                  {completedAssignments.length > 0 ? (
-                      completedAssignments.map(assignment => (
-                        <tr key={assignment._id}>
-                            <td>{assignment.missionObjective}</td>
-                            <td>{assignment.aircraft.tailNumber}</td>
-                            <td>{assignment.flightHoursLogged ? `${assignment.flightHoursLogged.toFixed(1)} hrs` : 'Pending'}</td>
-                            <td>
-                                {!assignment.flightHoursLogged && (
-                                    <button className="btn btn-primary btn-xs" onClick={() => openLogModal(assignment.missionId, assignment._id)}>
-                                        Log Flight
-                                    </button>
-                                )}
-                            </td>
-                        </tr>
-                      ))
-                  ) : (
-                      <tr><td colSpan="4" className='text-center'>No completed missions found.</td></tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Conditionally render the new Mission History component */}
+      {user.role === 'Pilot' && <PilotMissionHistory user={user} openLogModal={openLogModal} />}
 
       {/* Log Flight Modal */}
       <dialog id="log_flight_modal" className="modal">
