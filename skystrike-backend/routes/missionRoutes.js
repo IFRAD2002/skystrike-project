@@ -1,4 +1,4 @@
-
+// routes/missionRoutes.js
 const express = require('express');
 const {
   getMissions,
@@ -12,8 +12,8 @@ const { protect, authorize } = require('../middleware/authMiddleware');
 const router = express.Router({ mergeParams: true });
 
 router.route('/')
-    .get(protect, getMissions) 
-    .post(protect, authorize('Air Battle Manager'), createMission); // Admins create missions
+    .get(protect, getMissions)
+    .post(protect, authorize('Air Battle Manager'), createMission);
 
 router.route('/:id/status')
     .put(protect, authorize('Air Battle Manager'), updateMissionStatus);
@@ -21,6 +21,8 @@ router.route('/:id/status')
 router.route('/:id/assign')
     .put(protect, authorize('Air Battle Manager'), addAssignmentToMission);
 
-router.route('/:missionId/assignments/:assignmentId/log').put(protect, logFlightHours);
+// --- UPDATED ROUTE ---
+// This route is now simpler
+router.route('/:id/log').put(protect, logFlightHours);
 
 module.exports = router;

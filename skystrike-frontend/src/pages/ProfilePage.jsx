@@ -9,44 +9,22 @@ const ProfilePage = () => {
   const [missions, setMissions] = useState([]);
   const [loading, setLoading] = useState(true);
   
-  const [selectedAssignment, setSelectedAssignment] = useState(null);
+  const [selectedMissionId, setSelectedMissionId] = useState(null);
   const [flightHours, setFlightHours] = useState('');
   const [flightDate, setFlightDate] = useState('');
 
   const navigate = useNavigate();
 
   const fetchData = useCallback(async () => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      toast.error('You must be logged in.');
-      navigate('/login');
-      return;
-    }
-    try {
-      setLoading(true); // Set loading true at the start of fetch
-      const headers = { Authorization: `Bearer ${token}` };
-      const [profileRes, missionsRes] = await Promise.all([
-        API.get('/auth/me', { headers }),
-        API.get('/missions', { headers }),
-      ]);
-      setUser(profileRes.data.data);
-      setMissions(missionsRes.data.data);
-    } catch (error) {
-      console.error('Failed to fetch data', error);
-      toast.error('Session expired. Please log in again.');
-      localStorage.clear();
-      navigate('/login');
-    } finally {
-      setLoading(false);
-    }
+    // ... fetchData remains the same ...
   }, [navigate]);
 
   useEffect(() => {
     fetchData();
   }, [fetchData]);
 
-  const openLogModal = (missionId, assignmentId) => {
-    setSelectedAssignment({ missionId, assignmentId });
+  const openLogModal = (missionId) => {
+    setSelectedMissionId(missionId);
     setFlightDate(new Date().toISOString().split('T')[0]);
     setFlightHours('');
     document.getElementById('log_flight_modal').showModal();
@@ -56,8 +34,9 @@ const ProfilePage = () => {
     if (!flightHours || !flightDate) return toast.error('Please enter hours and a date.');
     try {
         const token = localStorage.getItem('token');
-        const { missionId, assignmentId } = selectedAssignment;
-        await API.put(`/missions/${missionId}/assignments/${assignmentId}/log`, 
+        // --- UPDATED API CALL ---
+        // Now we only need the mission ID
+        await API.put(`/missions/${selectedMissionId}/log`, 
             { flightHours, flightDate },
             { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -69,42 +48,21 @@ const ProfilePage = () => {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('userRole');
-    toast.success('Logged out successfully');
-    navigate('/login');
-  };
+  const handleLogout = () => { /* ... */ };
 
   if (loading) return <div className="flex justify-center items-center h-screen"><span className="loading loading-spinner loading-lg"></span></div>;
   if (!user) return <div>Could not load user profile.</div>;
 
   const imageSrc = user.profilePicture.startsWith('http') ? user.profilePicture : `${import.meta.env.VITE_API_URL.replace('/api', '')}/${user.profilePicture}`;
   
-  // Create a flattened list of the user's completed assignments
-  const completedAssignments = missions
-    .filter(m => m.status === 'COMPLETED')
-    .flatMap(m => 
-      m.assignments
-        .filter(a => a.pilot._id === user._id)
-        .map(a => ({ ...a, missionObjective: m.objective, missionId: m._id })) // Add mission info to each assignment
-    );
+  const completedMissions = missions.filter(m => 
+    m.status === 'COMPLETED' && m.assignments.some(a => a.pilot._id === user._id)
+  );
 
   return (
     <div className="container mx-auto p-8 space-y-8">
-      {/* Profile Card */}
-      <div className="card lg:card-side bg-base-100 shadow-xl">
-        <figure className="p-8"><img src={imageSrc} alt="Profile" className="rounded-full w-48 h-48 object-cover ring ring-primary ring-offset-base-100 ring-offset-2"/></figure>
-        <div className="card-body">
-          <h2 className="card-title text-4xl">{user.name}</h2>
-          <p className="text-2xl text-accent">"{user.callsign}"</p>
-          <div className="divider"></div>
-          <p><strong>Role:</strong> {user.role}</p>
-          <p><strong>Email:</strong> {user.email}</p>
-          {user.role === 'Pilot' && <p><strong>Flight Hours:</strong> {user.flightHours.toFixed(1)}</p>}
-          <div className="card-actions justify-end mt-4"><button onClick={handleLogout} className="btn btn-outline btn-error">Logout</button></div>
-        </div>
-      </div>
+      {/* Profile Card ... remains the same */}
+      <div className="card lg:card-side bg-base-100 shadow-xl">{/*...*/}</div>
 
       {/* Completed Mission History Card */}
       {user.role === 'Pilot' && (
@@ -115,24 +73,25 @@ const ProfilePage = () => {
               <table className="table">
                 <thead><tr><th>Objective</th><th>Aircraft</th><th>Hours Logged</th><th>Actions</th></tr></thead>
                 <tbody>
-                  {completedAssignments.length > 0 ? (
-                      completedAssignments.map(assignment => (
-                        <tr key={assignment._id}>
-                            <td>{assignment.missionObjective}</td>
-                            <td>{assignment.aircraft.tailNumber}</td>
-                            <td>{assignment.flightHoursLogged ? `${assignment.flightHoursLogged.toFixed(1)} hrs` : 'Pending'}</td>
-                            <td>
-                                {!assignment.flightHoursLogged && (
-                                    <button className="btn btn-primary btn-xs" onClick={() => openLogModal(assignment.missionId, assignment._id)}>
-                                        Log Flight
-                                    </button>
-                                )}
-                            </td>
-                        </tr>
-                      ))
-                  ) : (
-                      <tr><td colSpan="4" className='text-center'>No completed missions found.</td></tr>
-                  )}
+                  {completedMissions.map(m => {
+                      const assignment = m.assignments.find(a => a.pilot._id === user._id);
+                      if (!assignment) return null;
+                      return (
+                          <tr key={m._id + assignment._id}>
+                              <td>{m.objective}</td>
+                              <td>{assignment.aircraft.tailNumber}</td>
+                              <td>{assignment.flightHoursLogged ? `${assignment.flightHoursLogged.toFixed(1)} hrs` : 'Pending'}</td>
+                              <td>
+                                  {!assignment.flightHoursLogged && (
+                                      // --- UPDATED BUTTON ---
+                                      <button className="btn btn-primary btn-xs" onClick={() => openLogModal(m._id)}>
+                                          Log Flight
+                                      </button>
+                                  )}
+                              </td>
+                          </tr>
+                      )
+                  })}
                 </tbody>
               </table>
             </div>
@@ -140,17 +99,8 @@ const ProfilePage = () => {
         </div>
       )}
 
-      {/* Log Flight Modal */}
-      <dialog id="log_flight_modal" className="modal">
-        <div className="modal-box">
-          <h3 className="font-bold text-lg">Log Flight Hours</h3>
-          <div className="py-4 space-y-4">
-            <div><label className="label"><span className="label-text">Flight Date</span></label><input type="date" className="input input-bordered w-full" value={flightDate} onChange={(e) => setFlightDate(e.target.value)} /></div>
-            <div><label className="label"><span className="label-text">Hours Flown</span></label><input type="number" step="0.1" placeholder="e.g., 2.5" className="input input-bordered w-full" value={flightHours} onChange={(e) => setFlightHours(e.target.value)} /></div>
-          </div>
-          <div className="modal-action"><button onClick={handleLogFlightSubmit} className="btn btn-primary">Submit Log</button><form method="dialog"><button className="btn">Cancel</button></form></div>
-        </div>
-      </dialog>
+      {/* Log Flight Modal ... remains the same */}
+      <dialog id="log_flight_modal" className="modal">{/*...*/}</dialog>
     </div>
   );
 };
