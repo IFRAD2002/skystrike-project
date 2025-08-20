@@ -9,16 +9,13 @@ const ProfilePage = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   
-  // This state now only needs to hold the mission ID
-  const [selectedMissionId, setSelectedMissionId] = useState(null);
+  const [selectedAssignment, setSelectedAssignment] = useState(null);
   const [flightHours, setFlightHours] = useState('');
   const [flightDate, setFlightDate] = useState('');
 
   const navigate = useNavigate();
 
   const fetchProfile = async () => {
-    // This function can be simplified now, we'll keep it as is for consistency
-    // but the mission fetching is now fully in the child component.
     setLoading(true);
     const token = localStorage.getItem('token');
     if (!token) {
@@ -42,9 +39,8 @@ const ProfilePage = () => {
     fetchProfile();
   }, []);
 
-  // The function now only takes the missionId
-  const openLogModal = (missionId) => {
-    setSelectedMissionId(missionId);
+  const openLogModal = (missionId, assignmentId) => {
+    setSelectedAssignment({ missionId, assignmentId });
     setFlightDate(new Date().toISOString().split('T')[0]);
     setFlightHours('');
     document.getElementById('log_flight_modal').showModal();
@@ -52,16 +48,10 @@ const ProfilePage = () => {
 
   const handleLogFlightSubmit = async () => {
     if (!flightHours || !flightDate) return toast.error('Please enter hours and a date.');
-    const { missionId, assignmentId } = selectedAssignment;
-    console.log("Submitting to backend with these values:");
-    console.log("Mission ID:", missionId);
-    console.log("Assignment ID:", assignmentId);
-    console.log("Flight Hours:", flightHours);
-    console.log("Flight Date:", flightDate);
     try {
         const token = localStorage.getItem('token');
-        // The API call is now simpler
-        await API.put(`/missions/${selectedMissionId}/log`, 
+        const { missionId, assignmentId } = selectedAssignment;
+        await API.put(`/missions/${missionId}/assignments/${assignmentId}/log`, 
             { flightHours, flightDate },
             { headers: { Authorization: `Bearer ${token}` } }
         );
