@@ -88,11 +88,12 @@ exports.updateMissionStatus = async (req, res) => {
     }
 };
 
-// @desc    Log flight hours for a specific assignment in a mission
+/ @desc    Log flight hours for a specific assignment in a mission
 // @route   PUT /api/missions/:missionId/assignments/:assignmentId/log
 exports.logFlightHours = async (req, res) => {
     try {
         const { flightHours, flightDate } = req.body;
+        // Use both IDs from the URL parameters
         const { missionId, assignmentId } = req.params;
         
         const mission = await Mission.findById(missionId);
