@@ -93,12 +93,13 @@ exports.updateMissionStatus = async (req, res) => {
 exports.logFlightHours = async (req, res) => {
     try {
         const { flightHours, flightDate } = req.body;
-        const mission = await Mission.findById(req.params.id);
+        const mission = await Mission.findById(req.params.id); // Get mission by its ID
 
         if (!mission) {
             return res.status(404).json({ success: false, error: 'Mission not found' });
         }
 
+        // Find the specific assignment within the mission that belongs to the logged-in user
         const assignment = mission.assignments.find(
             (a) => a.pilot.toString() === req.user.id
         );
@@ -107,9 +108,11 @@ exports.logFlightHours = async (req, res) => {
             return res.status(404).json({ success: false, error: 'Assignment for this pilot not found in this mission' });
         }
         
+        // Update the assignment with the logged hours and date
         assignment.flightHoursLogged = flightHours;
         assignment.flightDate = flightDate;
         
+        // Update the pilot's total flight hours
         const pilot = await Pilot.findById(req.user.id);
         pilot.flightHours += Number(flightHours);
         
