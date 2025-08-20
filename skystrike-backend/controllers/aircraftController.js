@@ -1,11 +1,37 @@
-
+// controllers/aircraftController.js
 const Aircraft = require('../models/Aircraft');
+
+// --- NEW HELPER FUNCTION ---
+// This function checks a single aircraft and updates its status if needed.
+const checkAndUpdateMaintenanceStatus = async (aircraft) => {
+  if (aircraft.scheduledMaintenanceDate && aircraft.status === 'ACTIVE') {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Normalize to the start of the day
+
+    const scheduledDate = new Date(aircraft.scheduledMaintenanceDate);
+    scheduledDate.setHours(0, 0, 0, 0); // Normalize to the start of the day
+
+    // If the scheduled date is today or in the past, update the status
+    if (scheduledDate <= today) {
+      aircraft.status = 'IN_MAINTENANCE';
+      await aircraft.save();
+      console.log(`Aircraft ${aircraft.tailNumber} status automatically updated to IN_MAINTENANCE.`);
+    }
+  }
+};
+
 
 // @desc    Get all aircraft
 // @route   GET /api/aircrafts
 exports.getAircrafts = async (req, res) => {
   try {
     const aircrafts = await Aircraft.find();
+
+    // Loop through and check each aircraft before sending the response
+    for (const craft of aircrafts) {
+      await checkAndUpdateMaintenanceStatus(craft);
+    }
+
     res.status(200).json({ success: true, count: aircrafts.length, data: aircrafts });
   } catch (error) {
     res.status(500).json({ success: false, error: 'Server Error' });
@@ -19,11 +45,9 @@ exports.createAircraft = async (req, res) => {
     const { tailNumber, model, status } = req.body;
     const aircraftData = { tailNumber, model, status };
 
-    // If a file was uploaded, add its path to our data object
     if (req.file) {
-        // We store the path that the browser can use to access the image
-        aircraftData.image = req.file.path; // req.file.path is now a full URL from Cloudinary
-    }        
+      aircraftData.image = req.file.path;
+    }
 
     const aircraft = await Aircraft.create(aircraftData);
     res.status(201).json({ success: true, data: aircraft });
@@ -40,12 +64,18 @@ exports.getAircraftById = async (req, res) => {
     if (!aircraft) {
       return res.status(404).json({ success: false, error: 'Aircraft not found' });
     }
+
+    // Check the aircraft's status before sending the response
+    await checkAndUpdateMaintenanceStatus(aircraft);
+
     res.status(200).json({ success: true, data: aircraft });
   } catch (error) {
     res.status(500).json({ success: false, error: 'Server Error' });
   }
 };
 
+// @desc    Update an aircraft
+// @route   PUT /api/aircrafts/:id
 exports.updateAircraft = async (req, res) => {
     try {
         let aircraft = await Aircraft.findById(req.params.id);
@@ -65,6 +95,8 @@ exports.updateAircraft = async (req, res) => {
     }
 };
 
+// @desc    Delete an aircraft
+// @route   DELETE /api/aircrafts/:id
 exports.deleteAircraft = async (req, res) => {
     try {
         const aircraft = await Aircraft.findById(req.params.id);
@@ -73,7 +105,6 @@ exports.deleteAircraft = async (req, res) => {
             return res.status(404).json({ success: false, error: 'Aircraft not found' });
         }
 
-        // Check the condition before deleting
         if (aircraft.status !== 'OUT_OF_SERVICE') {
             return res.status(400).json({ 
                 success: false, 
@@ -87,5 +118,4 @@ exports.deleteAircraft = async (req, res) => {
     } catch (error) {
         res.status(500).json({ success: false, error: 'Server Error' });
     }
-}
-
+};
