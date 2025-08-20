@@ -7,32 +7,63 @@ import { Link } from 'react-router-dom';
 const AircraftList = ({ aircrafts, fetchAircrafts }) => {
   const userRole = localStorage.getItem('userRole');
 
-  // ... (handleStatusChange and handleDelete functions remain the same)
-  const handleStatusChange = async (e, aircraftId, newStatus) => { e.stopPropagation(); e.preventDefault(); try { const token = localStorage.getItem('token'); await API.put(`/aircrafts/${aircraftId}`, { status: newStatus }, { headers: { Authorization: `Bearer ${token}` } }); toast.success(`Aircraft status updated to ${newStatus}`); fetchAircrafts(); } catch (error) { toast.error(error.response?.data?.error || 'Failed to update status.'); }};
-  const handleDelete = async (e, aircraftId) => { e.stopPropagation(); e.preventDefault(); if (!window.confirm('Are you sure you want to delete this aircraft? This action cannot be undone.')) { return; } try { const token = localStorage.getItem('token'); await API.delete(`/aircrafts/${aircraftId}`, { headers: { Authorization: `Bearer ${token}` } }); toast.success('Aircraft decommissioned successfully.'); fetchAircrafts(); } catch (error) { toast.error(error.response?.data?.error || 'Failed to delete aircraft.'); }};
+  const handleStatusChange = async (e, aircraftId, newStatus) => {
+    e.stopPropagation();
+    e.preventDefault();
+    try {
+      const token = localStorage.getItem('token');
+      await API.put(
+        `/aircrafts/${aircraftId}`,
+        { status: newStatus },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      toast.success(`Aircraft status updated to ${newStatus}`);
+      fetchAircrafts();
+    } catch (error) {
+      toast.error(error.response?.data?.error || 'Failed to update status.');
+    }
+  };
 
+  const handleDelete = async (e, aircraftId) => {
+    e.stopPropagation();
+    e.preventDefault();
+    if (!window.confirm('Are you sure you want to delete this aircraft? This action cannot be undone.')) {
+      return;
+    }
+    try {
+      const token = localStorage.getItem('token');
+      await API.delete(`/aircrafts/${aircraftId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      toast.success('Aircraft decommissioned successfully.');
+      fetchAircrafts();
+    } catch (error) {
+      toast.error(error.response?.data?.error || 'Failed to delete aircraft.');
+    }
+  };
 
   if (aircrafts.length === 0) {
     return <p className="text-center py-10">No aircraft found in the fleet.</p>;
   }
 
   return (
-    // This is the key change: we use flex-col to force a single column
-    <div className="flex flex-col gap-8">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
       {aircrafts.map((craft) => (
-        <Link to={`/aircraft/${craft._id}`} key={craft._id} className="card lg:card-side bg-base-100 shadow-xl transition-transform transform hover:scale-[1.02]">
-          <figure className="lg:w-1/3 h-64 lg:h-auto">
+        <Link to={`/aircraft/${craft._id}`} key={craft._id} className="card w-full bg-base-100 shadow-xl transition-transform transform hover:scale-105">
+          {/* The <figure> with a fixed height is the key to the larger size */}
+          <figure className="h-96">
             <img 
               src={craft.image.startsWith('http') ? craft.image : `${import.meta.env.VITE_API_URL.replace('/api', '')}/${craft.image}`} 
               alt={craft.model} 
               className="object-cover w-full h-full" 
             />
           </figure>
-          <div className="card-body lg:w-2/3">
+          
+          <div className="card-body">
             <div className="flex justify-between items-start">
               <div>
-                <h2 className="card-title text-3xl">{craft.model}</h2>
-                <p className="font-mono text-lg">{craft.tailNumber}</p>
+                <h2 className="card-title text-2xl">{craft.model}</h2>
+                <p className="font-mono">{craft.tailNumber}</p>
               </div>
               <div className={`badge badge-lg ${
                   craft.status === 'ACTIVE' ? 'badge-success' :
@@ -41,9 +72,6 @@ const AircraftList = ({ aircrafts, fetchAircrafts }) => {
                 {craft.status}
               </div>
             </div>
-            
-            <div className="flex-grow"></div>
-
             <div className="card-actions justify-end items-center mt-4">
               {userRole && (
                 <select 
