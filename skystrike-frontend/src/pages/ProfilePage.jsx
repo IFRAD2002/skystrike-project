@@ -1,7 +1,6 @@
 // src/pages/ProfilePage.jsx
 import React, { useState, useEffect, useCallback } from 'react';
 import API from '../api';
-// Corrected import statement on the next line
 import { useNavigate, Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
@@ -16,21 +15,23 @@ const ProfilePage = () => {
 
   const navigate = useNavigate();
 
+  // We've separated the fetch logic from the useEffect to make it cleaner
   const fetchData = useCallback(async () => {
+    setLoading(true);
     const token = localStorage.getItem('token');
     if (!token) {
       toast.error('You must be logged in.');
       navigate('/login');
       return;
     }
-    try {
-      setLoading(true);
-      const headers = { Authorization: `Bearer ${token}` };
-      
-      const profileRes = await API.get('/auth/me', { headers });
-      setUser(profileRes.data.data);
 
-      if (profileRes.data.data.role === 'Pilot') {
+    try {
+      const headers = { Authorization: `Bearer ${token}` };
+      const profileRes = await API.get('/auth/me', { headers });
+      const currentUser = profileRes.data.data;
+      setUser(currentUser);
+
+      if (currentUser.role === 'Pilot') {
         const missionsRes = await API.get('/missions', { headers });
         setMissions(missionsRes.data.data);
       }
@@ -42,11 +43,11 @@ const ProfilePage = () => {
     } finally {
       setLoading(false);
     }
-  }, [navigate]);
+  }, [navigate]); // useCallback now only depends on navigate
 
   useEffect(() => {
     fetchData();
-  }, [fetchData]);
+  }, [fetchData]); // useEffect now only depends on the stable fetchData function
 
   const openLogModal = (missionId, assignmentId) => {
     setSelectedAssignment({ missionId, assignmentId });
@@ -84,13 +85,13 @@ const ProfilePage = () => {
 
   const imageSrc = user.profilePicture.startsWith('http') ? user.profilePicture : `${import.meta.env.VITE_API_URL.replace('/api', '')}/${user.profilePicture}`;
   
-  const completedAssignments = missions
+  const completedAssignments = user.role === 'Pilot' ? missions
     .filter(m => m.status === 'COMPLETED')
     .flatMap(m => 
       m.assignments
         .filter(a => a.pilot._id === user._id)
         .map(a => ({ ...a, missionObjective: m.objective, missionId: m._id }))
-    );
+    ) : [];
 
   return (
     <div className="container mx-auto p-8 space-y-8">
