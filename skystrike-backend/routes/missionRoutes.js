@@ -21,7 +21,7 @@ router.route('/:id/status')
 router.route('/:id/assign')
     .put(protect, authorize('Air Battle Manager'), addAssignmentToMission);
 
-// --- CORRECTED ROUTE ---
-router.route('/:id/log').put(protect, logFlightHours);
+// --- THIS IS THE CORRECTED, FINAL ROUTE ---
+router.route('/:missionId/assignments/:assignmentId/log').put(protect, logFlightHours);
 
 module.exports = router;
