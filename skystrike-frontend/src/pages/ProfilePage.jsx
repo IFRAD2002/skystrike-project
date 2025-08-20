@@ -25,12 +25,14 @@ const ProfilePage = () => {
     }
     try {
       const headers = { Authorization: `Bearer ${token}` };
-      const [profileRes, missionsRes] = await Promise.all([
-        API.get('/auth/me', { headers }),
-        API.get('/missions', { headers }),
-      ]);
+      // Only fetch missions if the user is a Pilot
+      const profileRes = await API.get('/auth/me', { headers });
       setUser(profileRes.data.data);
-      setMissions(missionsRes.data.data);
+
+      if (profileRes.data.data.role === 'Pilot') {
+        const missionsRes = await API.get('/missions', { headers });
+        setMissions(missionsRes.data.data);
+      }
     } catch (error) {
       console.error('Failed to fetch data', error);
       toast.error('Session expired. Please log in again.');
@@ -103,47 +105,53 @@ const ProfilePage = () => {
           <div className="divider"></div>
           <p><strong>Role:</strong> {user.role}</p>
           <p><strong>Email:</strong> {user.email}</p>
-          <p><strong>Flight Hours:</strong> {user.flightHours.toFixed(1)}</p>
+          {/* Only show flight hours for Pilots */}
+          {user.role === 'Pilot' && <p><strong>Flight Hours:</strong> {user.flightHours.toFixed(1)}</p>}
           <div className="card-actions justify-end mt-4">
             <button onClick={handleLogout} className="btn btn-outline btn-error">Logout</button>
           </div>
         </div>
       </div>
 
-      {/* Completed Mission History Card */}
-      <div className="card bg-base-100 shadow-xl">
-        <div className="card-body">
-          <h2 className="card-title">Completed Mission History</h2>
-          <div className="overflow-x-auto">
-            <table className="table">
-              <thead><tr><th>Objective</th><th>Aircraft</th><th>Hours Logged</th><th>Actions</th></tr></thead>
-              <tbody>
-                {completedMissions.length > 0 ? (
-                    completedMissions.map(m => {
-                        const assignment = m.assignments.find(a => a.pilot._id === user._id);
-                        return (
-                            <tr key={assignment._id}>
-                                <td>{m.objective}</td>
-                                <td>{assignment.aircraft.tailNumber}</td>
-                                <td>{assignment.flightHoursLogged ? `${assignment.flightHoursLogged.toFixed(1)} hrs` : 'Pending'}</td>
-                                <td>
-                                    {!assignment.flightHoursLogged && (
-                                        <button className="btn btn-primary btn-xs" onClick={() => openLogModal(m, assignment)}>
-                                            Log Flight
-                                        </button>
-                                    )}
-                                </td>
-                            </tr>
-                        )
-                    })
-                ) : (
-                    <tr><td colSpan="4" className='text-center'>No completed missions found.</td></tr>
-                )}
-              </tbody>
-            </table>
+      {/* --- THIS IS THE KEY CHANGE --- */}
+      {/* Only show the Mission History card if the user is a Pilot */}
+      {user.role === 'Pilot' && (
+        <div className="card bg-base-100 shadow-xl">
+          <div className="card-body">
+            <h2 className="card-title">Completed Mission History</h2>
+            <div className="overflow-x-auto">
+              <table className="table">
+                <thead><tr><th>Objective</th><th>Aircraft</th><th>Hours Logged</th><th>Actions</th></tr></thead>
+                <tbody>
+                  {completedMissions.length > 0 ? (
+                      completedMissions.map(m => {
+                          const assignment = m.assignments.find(a => a.pilot._id === user._id);
+                          // Add a check to ensure assignment is found before rendering
+                          if (!assignment) return null;
+                          return (
+                              <tr key={assignment._id}>
+                                  <td>{m.objective}</td>
+                                  <td>{assignment.aircraft.tailNumber}</td>
+                                  <td>{assignment.flightHoursLogged ? `${assignment.flightHoursLogged.toFixed(1)} hrs` : 'Pending'}</td>
+                                  <td>
+                                      {!assignment.flightHoursLogged && (
+                                          <button className="btn btn-primary btn-xs" onClick={() => openLogModal(m, assignment)}>
+                                              Log Flight
+                                          </button>
+                                      )}
+                                  </td>
+                              </tr>
+                          )
+                      })
+                  ) : (
+                      <tr><td colSpan="4" className='text-center'>No completed missions found.</td></tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Log Flight Modal */}
       <dialog id="log_flight_modal" className="modal">
@@ -168,6 +176,5 @@ const ProfilePage = () => {
     </div>
   );
 };
-
 
 export default ProfilePage;
