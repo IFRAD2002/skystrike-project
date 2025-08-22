@@ -49,7 +49,7 @@ exports.login = async (req, res) => {
         }
 
         const token = generateToken(pilot._id);
-        res.status(200).json({ success: true, token, message: "Enlist yourself into a journey of thrill commrade" });
+        res.status(200).json({ success: true, token, message: "Welcome commrade" });
 
     } catch (error) {
         res.status(500).json({ success: false, error: error.message });

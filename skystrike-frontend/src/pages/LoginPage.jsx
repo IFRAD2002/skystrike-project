@@ -1,6 +1,6 @@
 // src/pages/LoginPage.jsx
 import React, { useState } from 'react';
-import API from '../api'; // Use the new API config
+import API from '../api';
 import toast from 'react-hot-toast';
 import { useNavigate, Link } from 'react-router-dom';
 
@@ -12,7 +12,6 @@ const LoginPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Updated to use API.post
       const loginResponse = await API.post('/auth/login', {
         email,
         password,
@@ -21,13 +20,19 @@ const LoginPage = () => {
       const token = loginResponse.data.token;
       localStorage.setItem('token', token);
 
-      // Updated to use API.get
       const profileResponse = await API.get('/auth/me', {
           headers: { Authorization: `Bearer ${token}` }
       });
 
       localStorage.setItem('userRole', profileResponse.data.data.role);
+
+      // --- PLAY SOUND ON SUCCESS ---
+      const audio = new Audio('/sounds/login-success.mp3');
+      audio.play();
+      // ---------------------------
+
       toast.success(loginResponse.data.message || 'Logged in successfully!');
+      
       navigate('/profile');
     } catch (error) {
       toast.error(error.response?.data?.error || 'Login failed');
@@ -35,7 +40,7 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="hero min-h-screen bg-base-200" style={{backgroundImage: 'url(/military-bg.jpg)'}}>
+    <div className="hero min-h-screen bg-base-200" style={{backgroundImage: 'url(/hangar-background.jpg)'}}>
       <div className="hero-overlay bg-opacity-60"></div>
       <div className="hero-content flex-col text-center">
         <div className="mb-8">
