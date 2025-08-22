@@ -46,7 +46,7 @@ exports.createAircraft = async (req, res) => {
     const aircraftData = { tailNumber, model, status };
 
     if (req.file) {
-      aircraftData.image = `uploads/${req.file.filename}`; // Or req.file.path for Cloudinary
+      aircraftData.image = req.file.path;
     }
 
     const aircraft = await Aircraft.create(aircraftData);
