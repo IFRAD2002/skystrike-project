@@ -40,7 +40,7 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="hero min-h-screen bg-base-200" style={{backgroundImage: 'url(/hangar-background.jpg)'}}>
+    <div className="hero min-h-screen bg-base-200" style={{backgroundImage: 'url(/military-bg.jpg)'}}>
       <div className="hero-overlay bg-opacity-60"></div>
       <div className="hero-content flex-col text-center">
         <div className="mb-8">
