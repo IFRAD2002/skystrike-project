@@ -1,4 +1,4 @@
-// src/pages/AircraftDetailPage.jsx
+
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import API from '../api';
@@ -16,10 +16,10 @@ const AircraftDetailPage = () => {
   const [scheduleDate, setScheduleDate] = useState('');
   const [scheduleNotes, setScheduleNotes] = useState('');
   
-  // State to manage which modal is open
+  
   const [openModal, setOpenModal] = useState(null);
 
-  // --- THIS WAS THE MISSING LINE ---
+  
   const [activeTab, setActiveTab] = useState('history');
 
   const userRole = localStorage.getItem('userRole');

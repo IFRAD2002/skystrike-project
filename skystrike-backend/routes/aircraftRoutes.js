@@ -8,16 +8,16 @@ const {
   deleteAircraft,
 } = require('../controllers/aircraftController');
 
-// Import our middleware
+
 const { protect, authorize } = require('../middleware/authMiddleware');
 const upload = require('../middleware/upload');
 
-// Import the new maintenance router
+
 const maintenanceRouter = require('./maintenanceRoutes');
 
 const router = express.Router();
 
-// Re-route into other resource routers
+
 router.use('/:aircraftId/maintenance', maintenanceRouter);
 
 // Public routes

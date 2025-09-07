@@ -1,4 +1,4 @@
-// src/pages/AnalyticsPage.jsx
+
 import React, { useState, useEffect } from 'react';
 import API from '../api';
 import toast from 'react-hot-toast';
@@ -37,7 +37,7 @@ const AnalyticsPage = () => {
             <h1 className="text-4xl font-bold mb-2">Analytics Dashboard</h1>
             <p className="mb-8 opacity-70">A visual summary of fleet and mission data.</p>
             
-            {/* A single container for both charts */}
+            
             <div className="p-8 bg-base-100/50 backdrop-blur-sm rounded-lg shadow-xl">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     

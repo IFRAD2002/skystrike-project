@@ -1,6 +1,6 @@
-// src/pages/RegisterPage.jsx
+
 import React, { useState } from 'react';
-import API from '../api'; // Use the new API config
+import API from '../api'; 
 import toast from 'react-hot-toast';
 import { useNavigate, Link } from 'react-router-dom';
 import { FaUser, FaAt, FaLock, FaBroadcastTower, FaUpload } from 'react-icons/fa';
@@ -36,7 +36,7 @@ const RegisterPage = () => {
     }
 
     try {
-      // Updated to use API.post
+      
       await API.post('/auth/register', registrationData);
       toast.success('Registration successful! Please log in.');
       navigate('/login');

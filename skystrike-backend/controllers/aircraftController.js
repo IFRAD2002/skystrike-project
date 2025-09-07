@@ -1,17 +1,16 @@
-// controllers/aircraftController.js
+
 const Aircraft = require('../models/Aircraft');
 
-// --- HELPER FUNCTION ---
-// This function checks a single aircraft and updates its status if needed.
+
 const checkAndUpdateMaintenanceStatus = async (aircraft) => {
   if (aircraft.scheduledMaintenanceDate && aircraft.status === 'ACTIVE') {
     const today = new Date();
-    today.setHours(0, 0, 0, 0); // Normalize to the start of the day
+    today.setHours(0, 0, 0, 0); 
 
     const scheduledDate = new Date(aircraft.scheduledMaintenanceDate);
-    scheduledDate.setHours(0, 0, 0, 0); // Normalize to the start of the day
+    scheduledDate.setHours(0, 0, 0, 0); 
 
-    // If the scheduled date is today or in the past, update the status
+   
     if (scheduledDate <= today) {
       aircraft.status = 'IN_MAINTENANCE';
       await aircraft.save();
@@ -27,7 +26,7 @@ exports.getAircrafts = async (req, res) => {
   try {
     const aircrafts = await Aircraft.find();
 
-    // Loop through and check each aircraft before sending the response
+
     for (const craft of aircrafts) {
       await checkAndUpdateMaintenanceStatus(craft);
     }
@@ -65,7 +64,7 @@ exports.getAircraftById = async (req, res) => {
       return res.status(404).json({ success: false, error: 'Aircraft not found' });
     }
 
-    // Check the aircraft's status before sending the response
+  
     await checkAndUpdateMaintenanceStatus(aircraft);
 
     res.status(200).json({ success: true, data: aircraft });
@@ -84,7 +83,7 @@ exports.updateAircraft = async (req, res) => {
             return res.status(404).json({ success: false, error: 'Aircraft not found' });
         }
         
-        // If status is changing from IN_MAINTENANCE to ACTIVE, clear the schedule
+      
         if (
             aircraft.status === 'IN_MAINTENANCE' && 
             req.body.status === 'ACTIVE' &&

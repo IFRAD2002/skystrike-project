@@ -16,12 +16,7 @@ const maintenanceLogSchema = new mongoose.Schema(
       ref: 'Aircraft',
       required: true,
     },
-    // You could add a reference to the GroundCrew who performed the work
-    // performedBy: {
-    //   type: mongoose.Schema.Types.ObjectId,
-    //   ref: 'Pilot', // Assuming GroundCrew are also in the Pilot/User model
-    //   required: true,
-    // }
+    
   },
   {
     timestamps: true,

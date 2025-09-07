@@ -1,4 +1,4 @@
-// routes/missionRoutes.js
+
 const express = require('express');
 const {
   getMissions,
@@ -21,7 +21,7 @@ router.route('/:id/status')
 router.route('/:id/assign')
     .put(protect, authorize('Air Battle Manager'), addAssignmentToMission);
 
-// --- THIS IS THE CORRECT, FINAL ROUTE ---
+
 router.route('/:missionId/assignments/:assignmentId/log').put(protect, logFlightHours);
 
 module.exports = router;

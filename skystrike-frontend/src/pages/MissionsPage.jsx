@@ -1,4 +1,4 @@
-// src/pages/MissionsPage.jsx
+
 import React, { useState, useEffect, useCallback } from 'react';
 import API from '../api';
 import toast from 'react-hot-toast';
@@ -63,7 +63,7 @@ const MissionsPage = () => {
       );
       toast.success('Assignment added to mission!');
       document.getElementById('assign_modal').close();
-      fetchData(); // Refresh data
+      fetchData(); 
     } catch (error) {
        toast.error(error.response?.data?.error || 'Assignment failed.');
     }
@@ -79,8 +79,8 @@ const MissionsPage = () => {
       );
       toast.success('Mission created successfully!');
       document.getElementById('create_mission_modal').close();
-      setNewObjective(''); // Clear input
-      fetchData(); // Refresh data
+      setNewObjective(''); 
+      fetchData(); 
     } catch (error) {
       toast.error('Failed to create mission.');
     }
@@ -94,7 +94,7 @@ const MissionsPage = () => {
             { headers: { Authorization: `Bearer ${token}` } }
         );
         toast.success(`Mission status updated to ${newStatus}`);
-        fetchData(); // Refresh the list
+        fetchData(); 
     } catch (error) {
         toast.error('Failed to update mission status.');
     }
@@ -174,7 +174,7 @@ const MissionsPage = () => {
         </div>
       </div>
 
-      {/* Assignment Modal */}
+      
       <dialog id="assign_modal" className="modal">
         <div className="modal-box">
           <h3 className="font-bold text-lg">Assign to: "{selectedMission?.objective}"</h3>
@@ -201,7 +201,7 @@ const MissionsPage = () => {
         </div>
       </dialog>
 
-      {/* Create Mission Modal */}
+      
       <dialog id="create_mission_modal" className="modal">
         <div className="modal-box">
           <h3 className="font-bold text-lg">Create New Mission</h3>

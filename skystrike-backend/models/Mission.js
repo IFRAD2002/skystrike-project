@@ -12,14 +12,14 @@ const assignmentSchema = new mongoose.Schema({
     ref: 'Aircraft',
     required: true,
   },
-  // --- NEW FIELDS START HERE ---
+  
   flightHoursLogged: {
     type: Number,
   },
   flightDate: {
     type: Date,
   },
-  // --- NEW FIELDS END HERE ---
+  
 }); 
 
 const missionSchema = new mongoose.Schema(

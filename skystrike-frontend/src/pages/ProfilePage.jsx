@@ -1,4 +1,4 @@
-// src/pages/ProfilePage.jsx
+
 import React, { useState, useEffect } from 'react';
 import API from '../api';
 import { useNavigate, Link } from 'react-router-dom';
@@ -57,7 +57,7 @@ const ProfilePage = () => {
         );
         toast.success("Flight hours logged!");
         document.getElementById('log_flight_modal').close();
-        // Re-fetch profile to update total flight hours
+        
         fetchProfile(); 
     } catch (error) {
         toast.error(error.response?.data?.error || "Failed to log hours.");
@@ -92,7 +92,7 @@ const ProfilePage = () => {
         </div>
       </div>
 
-      {/* Conditionally render the new Mission History component */}
+      
       {user.role === 'Pilot' && <PilotMissionHistory user={user} openLogModal={openLogModal} />}
 
       {/* Log Flight Modal */}

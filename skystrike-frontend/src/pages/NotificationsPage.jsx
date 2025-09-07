@@ -1,4 +1,4 @@
-// src/pages/NotificationsPage.jsx
+
 import React, { useState, useEffect, useCallback } from 'react';
 import API from '../api';
 import toast from 'react-hot-toast';
@@ -28,7 +28,7 @@ const NotificationsPage = () => {
         try {
             const token = localStorage.getItem('token');
             await API.put('/notifications/markread', {}, { headers: { Authorization: `Bearer ${token}` } });
-            // Refresh the list to show the "read" status
+            
             fetchNotifications();
         } catch (error) {
             toast.error("Failed to mark notifications as read.");

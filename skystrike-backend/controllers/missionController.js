@@ -1,4 +1,4 @@
-// controllers/missionController.js
+
 const Mission = require('../models/Mission');
 const Pilot = require('../models/Pilot');
 const Notification = require('../models/Notification');
@@ -93,7 +93,7 @@ exports.updateMissionStatus = async (req, res) => {
 exports.logFlightHours = async (req, res) => {
     try {
         const { flightHours, flightDate } = req.body;
-        // Use both IDs from the URL parameters
+        
         const { missionId, assignmentId } = req.params;
         
         const mission = await Mission.findById(missionId);
@@ -101,7 +101,7 @@ exports.logFlightHours = async (req, res) => {
             return res.status(404).json({ success: false, error: 'Mission not found' });
         }
 
-        // Find the specific assignment within the mission using its own ID
+        
         const assignment = mission.assignments.id(assignmentId);
         if (!assignment) {
             return res.status(404).json({ success: false, error: 'Assignment not found' });

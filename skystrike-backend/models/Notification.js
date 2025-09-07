@@ -1,4 +1,4 @@
-// models/Notification.js
+
 const mongoose = require('mongoose');
 
 const notificationSchema = new mongoose.Schema({
@@ -15,7 +15,7 @@ const notificationSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  // Optional: Link to a specific mission to make notifications clickable
+  
   mission: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Mission',

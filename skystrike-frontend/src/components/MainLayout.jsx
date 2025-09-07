@@ -1,4 +1,4 @@
-// src/components/MainLayout.jsx
+
 import React, { useEffect, useState, useRef } from 'react';
 import { Outlet } from 'react-router-dom';
 import Navbar from './Navbar';
@@ -10,7 +10,7 @@ const MainLayout = () => {
   const socket = useRef();
   const [userId, setUserId] = useState(null);
 
-  // Get user ID from token
+  
   useEffect(() => {
     try {
       const token = localStorage.getItem('token');
@@ -23,14 +23,14 @@ const MainLayout = () => {
     }
   }, []);
 
-  // Connect to socket.io server
+  
   useEffect(() => {
-    // Make sure your backend URL is correct here
+    
     socket.current = io(import.meta.env.VITE_API_URL.replace('/api', '')); 
 
-    // Listen for notifications from the server
+    
     socket.current.on("getNotification", (data) => {
-      // Check if the notification is for me
+      
       if (data.recipientId === userId) {
         toast.success(data.message, {
           icon: '🔔',
@@ -44,7 +44,7 @@ const MainLayout = () => {
     }
   }, [userId]);
 
-  // Add user to the online list on the server
+  
   useEffect(() => {
     if (socket.current && userId) {
       socket.current.emit("addUser", userId);

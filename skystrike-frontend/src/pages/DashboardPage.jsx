@@ -8,7 +8,7 @@ const DashboardPage = () => {
   const [aircrafts, setAircrafts] = useState([]);
   const [loading, setLoading] = useState(true);
   
-  // 1. Get the user's role
+  
   const userRole = localStorage.getItem('userRole');
 
   const fetchAircrafts = useCallback(async () => {
@@ -16,7 +16,7 @@ const DashboardPage = () => {
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const response = await API.get('/aircrafts', { // Use API.get without the full URL
+      const response = await API.get('/aircrafts', { 
           headers: { Authorization: `Bearer ${token}` }
       });
       setAircrafts(response.data.data);
@@ -36,7 +36,7 @@ const DashboardPage = () => {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-4xl font-bold">Fleet Dashboard</h1>
 
-        {/* 2. Conditionally render the button */}
+        
         {userRole === 'Air Battle Manager' && (
           <button className="btn btn-primary" onClick={() => document.getElementById('add_aircraft_modal').showModal()}>
             Add Aircraft

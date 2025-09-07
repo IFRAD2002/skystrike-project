@@ -1,6 +1,6 @@
-// src/components/AddAircraftForm.jsx
+
 import React, { useState } from 'react';
-import API from '../api'; // CORRECTED PATH
+import API from '../api'; 
 import toast from 'react-hot-toast';
 
 const AddAircraftForm = ({ onSuccess }) => {

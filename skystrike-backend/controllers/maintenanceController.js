@@ -1,4 +1,4 @@
-// controllers/maintenanceController.js
+
 const MaintenanceLog = require('../models/MaintenanceLog');
 const Aircraft = require('../models/Aircraft');
 

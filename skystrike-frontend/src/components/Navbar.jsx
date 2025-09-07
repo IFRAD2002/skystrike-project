@@ -1,4 +1,4 @@
-// src/components/Navbar.jsx
+
 import React from 'react';
 import { NavLink, useNavigate, Link } from 'react-router-dom';
 import toast from 'react-hot-toast';

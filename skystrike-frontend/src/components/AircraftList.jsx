@@ -1,4 +1,4 @@
-// src/components/AircraftList.jsx
+
 import React from 'react';
 import API from '../api';
 import toast from 'react-hot-toast';
@@ -8,7 +8,7 @@ const AircraftList = ({ aircrafts, fetchAircrafts }) => {
   const userRole = localStorage.getItem('userRole');
 
   const handleStatusChange = async (e, aircraftId, newStatus) => {
-    // Stop the event from bubbling up to the Link
+    
     e.stopPropagation();
     e.preventDefault();
     try {
@@ -26,7 +26,7 @@ const AircraftList = ({ aircrafts, fetchAircrafts }) => {
   };
 
   const handleDelete = async (e, aircraftId) => {
-    // Stop the event from bubbling up to the Link
+    
     e.stopPropagation();
     e.preventDefault();
     if (!window.confirm('Are you sure you want to delete this aircraft? This action cannot be undone.')) {
@@ -78,7 +78,7 @@ const AircraftList = ({ aircrafts, fetchAircrafts }) => {
                 <select 
                   className="select select-bordered select-sm" 
                   value={craft.status}
-                  // This onClick handler stops the link from firing when you just click the dropdown
+                  
                   onClick={(e) => { e.stopPropagation(); e.preventDefault(); }}
                   onChange={(e) => handleStatusChange(e, craft._id, e.target.value)}
                 >

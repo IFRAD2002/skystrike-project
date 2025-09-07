@@ -1,4 +1,4 @@
-// routes/maintenanceRoutes.js
+
 const express = require('express');
 const {
   getLogsForAircraft,
@@ -7,7 +7,7 @@ const {
 
 const { protect, authorize } = require('../middleware/authMiddleware');
 
-// The { mergeParams: true } option allows us to access params from parent routers (like :aircraftId)
+
 const router = express.Router({ mergeParams: true });
 
 router

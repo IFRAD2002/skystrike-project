@@ -1,4 +1,4 @@
-// src/pages/LoginPage.jsx
+
 import React, { useState } from 'react';
 import API from '../api';
 import toast from 'react-hot-toast';
@@ -26,11 +26,11 @@ const LoginPage = () => {
 
       localStorage.setItem('userRole', profileResponse.data.data.role);
 
-      // --- PLAY SOUND ON SUCCESS ---
+      
       const audio = new Audio('/sounds/login-success.mp3');
       audio.volume = 0.1;
       audio.play();
-      // ---------------------------
+      
 
       toast.success(loginResponse.data.message || 'Logged in successfully!');
       
