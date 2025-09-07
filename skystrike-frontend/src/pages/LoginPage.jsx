@@ -28,7 +28,7 @@ const LoginPage = () => {
 
       // --- PLAY SOUND ON SUCCESS ---
       const audio = new Audio('/sounds/login-success.mp3');
-      audio.volume = 0.4;
+      audio.volume = 0.1;
       audio.play();
       // ---------------------------
 
