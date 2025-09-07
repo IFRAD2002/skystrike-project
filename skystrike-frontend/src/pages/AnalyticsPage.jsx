@@ -34,13 +34,16 @@ const AnalyticsPage = () => {
 
     return (
         <div className="container mx-auto p-4">
-            <h1 className="text-4xl font-bold mb-8">Analytics Dashboard</h1>
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {/* Aircraft Status Pie Chart */}
-                <div className="card bg-base-100 shadow-xl">
-                    <div className="card-body">
-                        <h2 className="card-title">Aircraft Status Breakdown</h2>
+            <h1 className="text-4xl font-bold mb-2">Analytics Dashboard</h1>
+            <p className="mb-8 opacity-70">A visual summary of fleet and mission data.</p>
+            
+            {/* A single container for both charts */}
+            <div className="p-8 bg-base-100/50 backdrop-blur-sm rounded-lg shadow-xl">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    
+                    {/* Aircraft Status Pie Chart */}
+                    <div className="flex flex-col items-center">
+                        <h2 className="text-xl font-bold mb-4">Aircraft Status Breakdown</h2>
                         <ResponsiveContainer width="100%" height={300}>
                             <PieChart>
                                 <Pie data={stats.statusStats} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={100} fill="#8884d8" label>
@@ -53,12 +56,10 @@ const AnalyticsPage = () => {
                             </PieChart>
                         </ResponsiveContainer>
                     </div>
-                </div>
-                
-                {/* Monthly Sorties Bar Chart */}
-                <div className="card bg-base-100 shadow-xl">
-                    <div className="card-body">
-                        <h2 className="card-title">Completed Sorties by Month</h2>
+                    
+                    {/* Monthly Sorties Bar Chart */}
+                    <div className="flex flex-col items-center">
+                        <h2 className="text-xl font-bold mb-4">Completed Sorties by Month</h2>
                          <ResponsiveContainer width="100%" height={300}>
                             <BarChart data={stats.monthlySorties}>
                                 <XAxis dataKey="name" />
@@ -69,6 +70,7 @@ const AnalyticsPage = () => {
                             </BarChart>
                         </ResponsiveContainer>
                     </div>
+
                 </div>
             </div>
         </div>
