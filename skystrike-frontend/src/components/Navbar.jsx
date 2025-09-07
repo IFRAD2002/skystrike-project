@@ -40,7 +40,7 @@ const Navbar = () => {
           {userRole === 'Air Battle Manager' && (
             <>
               <li><NavLink to="/missions" style={({ isActive }) => isActive ? activeLinkStyle : undefined}>Missions</NavLink></li>
-              <li><NavLink to="/reports" style={({ isActive }) => isActive ? activeLinkStyle : undefined}>XD</NavLink></li>
+              <li><NavLink to="/reports" style={({ isActive }) => isActive ? activeLinkStyle : undefined}>Reports</NavLink></li>
               <li><NavLink to="/analytics" style={({ isActive }) => isActive ? activeLinkStyle : undefined}>Analytics</NavLink></li>
             </>
           )}
