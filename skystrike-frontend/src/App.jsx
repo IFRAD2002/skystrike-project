@@ -1,5 +1,4 @@
 // src/App.jsx
-import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 
@@ -12,6 +11,7 @@ import MissionsPage from './pages/MissionsPage';
 import AircraftDetailPage from './pages/AircraftDetailPage';
 import ReportsPage from './pages/ReportsPage';
 import NotificationsPage from './pages/NotificationsPage';
+import AnalyticsPage from './pages/AnalyticsPage';
 
 // Import Layouts and Route Protection
 import ProtectedRoute from './components/ProtectedRoute';
@@ -35,6 +35,7 @@ function App() {
           <Route path="/missions" element={<MissionsPage />} />
           <Route path="/reports" element={<ReportsPage />} />
           <Route path="/notifications" element={<NotificationsPage />} />
+          <Route path="/analytics" element={<AnalyticsPage />} />
         </Route>
       </Routes>
     </div>
