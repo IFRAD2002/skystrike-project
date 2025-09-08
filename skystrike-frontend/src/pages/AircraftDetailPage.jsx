@@ -1,4 +1,4 @@
-// src/pages/AircraftDetailPage.jsx
+
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import API from '../api';
@@ -58,7 +58,7 @@ const AircraftDetailPage = () => {
       toast.success('Maintenance log added.');
       document.getElementById('log_maintenance_modal').close();
       setDescription('');
-      fetchData(); // Refresh all data on the page
+      fetchData(); 
     } catch (error) {
       toast.error('Failed to add log.');
     }
@@ -76,7 +76,7 @@ const AircraftDetailPage = () => {
       });
       toast.success('Aircraft details updated.');
       document.getElementById('edit_aircraft_modal').close();
-      fetchData(); // Refresh all data on the page
+      fetchData(); 
     } catch (error) {
       toast.error(error.response?.data?.error || 'Failed to update details.');
     }
@@ -93,7 +93,7 @@ const AircraftDetailPage = () => {
       await API.put(`/aircrafts/${id}`, body, { headers: { Authorization: `Bearer ${token}` } });
       toast.success('Maintenance scheduled successfully.');
       document.getElementById('schedule_maintenance_modal').close();
-      fetchData(); // Refresh data
+      fetchData(); 
     } catch (error) {
       toast.error('Failed to schedule maintenance.');
     }
@@ -169,7 +169,7 @@ const AircraftDetailPage = () => {
         </div>
       </div>
 
-      {/* --- ALL MODALS --- */}
+      {/* ALL MODALS */}
       <dialog id="log_maintenance_modal" className="modal">
         <div className="modal-box">
           <h3 className="font-bold text-lg">Log New Maintenance</h3>
