@@ -41,30 +41,24 @@ exports.addAssignmentToMission = async (req, res) => {
         if (!mission) {
             return res.status(404).json({ success: false, error: 'Mission not found' });
         }
+
+       
+        if (mission.status === 'COMPLETED') {
+            return res.status(400).json({ success: false, error: 'Cannot modify a completed mission' });
+        }
+       
         
         const newAssignment = { pilot: pilotId, aircraft: aircraftId };
         mission.assignments.push(newAssignment);
         await mission.save();
 
         const message = `New Assignment: You have been assigned to mission "${mission.objective}"`;
-        
-        await Notification.create({
-            recipient: pilotId,
-            message: message,
-            mission: mission._id,
-        });
-
+        await Notification.create({ recipient: pilotId, message: message, mission: mission._id });
         const io = req.app.get('socketio');
-        io.emit("getNotification", {
-            recipientId: pilotId,
-            message: message,
-        });
+        io.emit("getNotification", { recipientId: pilotId, message: message });
         
-        console.log(`Notification saved and sent for pilot ${pilotId}`);
-
         res.status(200).json({ success: true, data: mission });
     } catch (error) {
-        console.log(error);
         res.status(500).json({ success: false, error: 'Server Error' });
     }
 };
@@ -73,15 +67,22 @@ exports.addAssignmentToMission = async (req, res) => {
 // @route   PUT /api/missions/:id/status
 exports.updateMissionStatus = async (req, res) => {
     try {
-        const { status } = req.body;
-        const mission = await Mission.findByIdAndUpdate(req.params.id, { status }, {
-            new: true,
-            runValidators: true
-        });
+        const mission = await Mission.findById(req.params.id);
 
         if (!mission) {
             return res.status(404).json({ success: false, error: 'Mission not found' });
         }
+
+        
+        if (mission.status === 'COMPLETED') {
+            return res.status(400).json({ success: false, error: 'Cannot modify a completed mission' });
+        }
+        
+
+        const { status } = req.body;
+        mission.status = status;
+        await mission.save();
+        
         res.status(200).json({ success: true, data: mission });
     } catch (error) {
         res.status(500).json({ success: false, error: 'Server Error' });
