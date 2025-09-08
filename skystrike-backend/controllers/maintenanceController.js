@@ -25,6 +25,11 @@ exports.createMaintenanceLog = async (req, res) => {
     }
 
     const log = await MaintenanceLog.create(req.body);
+    
+    aircraft.scheduledMaintenanceDate = null;
+    aircraft.scheduledMaintenanceNotes = '';
+    await aircraft.save();
+    
     res.status(201).json({ success: true, data: log });
   } catch (error) {
     res.status(400).json({ success: false, error: error.message });
